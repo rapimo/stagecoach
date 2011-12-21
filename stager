@@ -1,35 +1,146 @@
 #!/usr/bin/env ruby
-
 require 'rubygems'
 require 'redmine_client'
 require 'yaml'
 
 config = YAML::load(File.open('config.yaml'))
 
+# redmine_client config stuff based on config.yaml
 RedmineClient::Base.configure do
-  self.site = config[ "redmine_site" ]
-  self.user = config[ "redmine_api_key" ]
-  self.password = 'test'
+  self.site = config["redmine_site"]
+  self.user = config["redmine_api_key"]
+  self.password = 'any_password_works_here'
 end
 
-line_break = "-" * 50
 
-puts `git status`
-
-
-
-ARGV.each do |input|
-  issue_number = input
-  issue = RedmineClient::Issue.find(issue_number)
-  puts line_break
-  puts "Subject: #{issue.subject}"
-  puts line_break
-  puts issue.description
-  puts line_break
-  puts "Created by #{issue.author.name}"
-  puts "Assigned to #{issue.assigned_to.name}"
-  puts line_break
-#  issue.attributes.each do |key, value|
-#    puts "#{key.to_s} = #{value.to_s}"
-#  end
+# Formatting stuff
+class String
+  def red; colorize(self, "\e[1m\e[31m"); end
+  def green; colorize(self, "\e[32m"); end
+  def colorize(text, color_code)  "#{color_code}#{text}\e[0m" end
 end
+
+def line_break
+  puts  ("-" * 50)
+end
+
+# API testing stuff - can be removed once the redmine API supports changing of
+# issue status, currently this is broken.
+# More information at http://www.redmine.org/boards/2/topics/25920
+def test_issue
+  issue_url = RedmineClient::Base.site + "/issues/" + @issue.id
+ issue_hash = @issue.status.attributes
+  if issue_hash['name'] == 'Feedback'
+    puts 'Feedback changed successfully!'
+    puts "View issue: #{issue_url}"
+  else
+    puts "Sorry, the Redmine API doesn't currently support changing of issue status via API.  Please change it manually here:"
+    puts issue_url
+  end
+end
+
+# What local git branch are we in?
+def branch_check
+  @branches = `git branch`.split("\n")
+  @branches.each do |b| 
+    if b =~ /\*/
+      @local_branch = b[1..-1].strip
+    end
+  end
+end
+
+# Make sure this is the correct git branch
+loop do
+  branch_check
+  puts "You are currently in local branch: #{@local_branch.red} \nIs this correct? (Y/n):"
+  if gets.chomp == "Y"
+    break
+  else
+    puts "Which local branch would you like to be in?"
+    @branches.each do |b|
+      n = @branches.index(b)
+      puts "#{n}.  " + b
+    end
+    @desired_branch = @branches[gets.chomp.to_i]
+    if @desired_branch =~ /\*/
+      `git checkout #{@desired_branch[1..-1]}`
+    else
+      `git checkout #{@desired_branch}`
+    end
+  end
+end
+
+# Create a remote git branch
+puts "Enter new remote branch name (eg. #{@local_branch}):"
+branch = STDIN.gets.strip
+
+# Planio issue link-up with verification
+loop do
+  begin
+    puts "Enter planio issue number:"
+    issue_number = STDIN.gets.chomp
+    raise ArgumentError.new('Invalid entry, try again') if issue_number =~ (/\D/)
+  rescue ArgumentError => e
+    puts e.message
+    redo
+  end
+  begin
+    puts "Searching for issue number #{issue_number}..."
+    @issue = RedmineClient::Issue.find(issue_number)
+  rescue ActiveResource::ResourceNotFound => e
+    puts e.message
+    redo
+  end
+  puts "Issue found: #{@issue.subject} \nIs this correct? (Y/n):"
+  break  if gets.chomp == 'Y'
+end
+
+# Testing stuff, the API can not currently change issue status: see
+# http://www.redmine.org/boards/2/topics/25920
+puts @issue.status.attributes
+
+# Get things rolling,  if everything else is OK.
+puts "Continue? Type 'push' to start script or anything else to cancel:"
+unless gets.chomp == 'push'
+  exit
+end
+
+line_break
+puts "-- Pushing your changes to branch '#{branch}' --"
+`git push origin #{branch}`
+line_break
+puts "-- Merging into staging (after pull updates) --"
+`git checkout staging`
+`git pull origin staging`
+`git merge #{branch}`
+line_break
+puts "-- Pushing to staging --"
+`git push origin staging`
+line_break
+puts "-- Deploying staging --"
+`bundle exec cap staging deploy`
+`git checkout master`
+line_break
+puts "-- Attempting to change Planio ticket status to 'Feedback' for you..."
+@issue.status.id = 4
+@issue.save
+test_issue
+
+#    issue_number = input
+#    issue = RedmineClient::Issue.find(issue_number)
+#    puts line_break
+#    puts "Subject: #{issue.subject}"
+#    puts line_break
+#    puts issue.description
+#    puts line_break
+#    puts "Created by #{issue.author.name}"
+#    puts "Assigned to #{issue.assigned_to.name}"
+#    puts line_break
+#end
+
+#
+#
+## Changing to master branch
+
+#
+#echo "*** PLEASE DON'T FORGET TO CHANGE PLAN.IO STATUS TO FEEDBACK ***"
