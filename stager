@@ -14,6 +14,10 @@ end
 
 line_break = "-" * 50
 
+puts `git status`
+
+
+
 ARGV.each do |input|
   issue_number = input
   issue = RedmineClient::Issue.find(issue_number)
