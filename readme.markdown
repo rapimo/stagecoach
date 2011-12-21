@@ -1,4 +1,5 @@
 Redmine API Access
 ==================
-Change config.yaml to reflect your settings, then run:
-`./redmine_api.rb(issue_number)`
+1.  Change config.yaml to reflect your settings
+2.  chmod +x redmine_api.rb
+3.  `./redmine_api.rb(issue_number)`
