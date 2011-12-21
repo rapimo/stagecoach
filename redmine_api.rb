@@ -4,11 +4,11 @@ require 'rubygems'
 require 'redmine_client'
 require 'yaml'
 
-config = File.open('config.yaml')
+config = YAML::load(File.open('config.yaml'))
 
 RedmineClient::Base.configure do
-  self.site = redmine_site
-  self.user = redmine_api_key
+  self.site = config[ "redmine_site" ]
+  self.user = config[ "redmine_api_key" ]
   self.password = 'test'
 end
 
