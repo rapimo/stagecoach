@@ -125,22 +125,3 @@ puts "-- Attempting to change Planio ticket status to 'Feedback' for you..."
 @issue.status.id = 4
 @issue.save
 test_issue
-
-#    issue_number = input
-#    issue = RedmineClient::Issue.find(issue_number)
-#    puts line_break
-#    puts "Subject: #{issue.subject}"
-#    puts line_break
-#    puts issue.description
-#    puts line_break
-#    puts "Created by #{issue.author.name}"
-#    puts "Assigned to #{issue.assigned_to.name}"
-#    puts line_break
-#end
-
-#
-#
-## Changing to master branch
-
-#
-#echo "*** PLEASE DON'T FORGET TO CHANGE PLAN.IO STATUS TO FEEDBACK ***"
