@@ -140,7 +140,9 @@ module Stager
   puts "Would you like to edit the issue on Github? [Y]es or [N]o"
 
   `open #{Git.view_issue(github_issue_id)}` if STDIN.gets.chomp == 'Y'
-   
+
+  puts "Hit any key once you are done editing to continue"
+  Thread.sleep unless STDIN.gets.chomp
 
   # Create a local git branch for this issue
   loop do
@@ -162,7 +164,7 @@ module Stager
 
   # Make sure this is the correct git branch
   loop do
-    puts "You are currently in local branch: #{ Git.current_local_branch.red } \nIs this correct? ([Y]es or [N]o):"
+    puts "You are currently in local branch: #{Git.current_local_branch.red} \nIs this correct? ([Y]es or [N]o):"
     if STDIN.gets.chomp == "Y"
       break
     else
