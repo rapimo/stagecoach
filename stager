@@ -107,7 +107,7 @@ end
 
 line_break
 puts "-- Pushing your changes to branch '#{branch}' --"
-`git push origin #{branch}`
+`git push origin #{@local_branch}:#{branch}`
 line_break
 puts "-- Merging into staging (after pull updates) --"
 `git checkout staging`
