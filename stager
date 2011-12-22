@@ -26,6 +26,12 @@ module Stager
     end
   end
 
+  class Redmine
+    def self.issue(issue_number)
+      return RedmineClient::Issue.find(issue_number)
+    end
+  end
+
   class Git
     def self.branches
       `git branch`.split("\n")
@@ -37,6 +43,10 @@ module Stager
           return b[1..-1].strip
         end
       end
+    end
+
+    def self.change_to_branch(branch)
+      `git checkout #{branch}`
     end
   end
 
@@ -73,49 +83,53 @@ module Stager
   end
 
   # Planio issue link-up 
-  if config["issue_number"]
-    puts "Current plan.io issue is #{config["issue_number"]}.  Is this correct? (Y/n):"
-    if STDIN.gets.chomp == 'Y'
-      @issue = RedmineClient::Issue.find(config["issue_number"])
+  loop do
+    if issue_number = config["issue_number"]
+      puts "Current plan.io issue is #{issue_number}."
     else
-      loop do
-        begin
-          puts "Enter planio issue number:"
-          issue_number = STDIN.gets.chomp
-          raise ArgumentError.new('Invalid entry, try again') if issue_number =~ (/\D/)
-        rescue ArgumentError => e
-          puts e.message
-          redo
-        end
-        begin
-          puts "Searching for issue number #{issue_number}..."
-          @issue = RedmineClient::Issue.find(issue_number)
-        rescue ActiveResource::ResourceNotFound => e
-          puts e.message
-          redo
-        end
-        puts "Issue found: #{@issue.subject} \nIs this correct? (Y/n):"
-        if STDIN.gets.chomp == 'Y'
-          config["issue_number"] = issue_number
-          Config.save(config, config_file)
-          break
-        end
+      begin
+        puts "Enter planio issue number:"
+        issue_number = STDIN.gets.chomp
+        raise ArgumentError.new('Invalid entry, try again') if issue_number =~ (/\D/)
+      rescue ArgumentError => e
+        puts e.message
+        redo
+      end
+      begin
+        puts "Searching for issue number #{issue_number}..."
+        @issue = Redmine.issue(issue_number)
+        puts "Issue found: #{@issue.subject} \n" 
+      rescue ActiveResource::ResourceNotFound => e
+        puts e.message
+        redo
       end
     end
+    puts "Is this correct? [Y]es or enter correct issue number:"
+    response = STDIN.gets.chomp
+    if response == 'Y'
+      @issue = Redmine.issue(issue_number)
+      config["issue_number"] = issue_number
+      Config.save(config, config_file)
+      break
+    elsif response =~ /\d+/
+      config["issue_number"] = response
+      Config.save(config, config_file)
+    end
+    redo
   end
 
   # Create a local git branch for this issue
   loop do
     Git.current_branch
-    puts "Please enter a local branch name for issue:"
-    puts @issue.subject
+    puts "Please enter a local branch name for issue: \"#{@issue.subject}\""
     new_local_branch = STDIN.gets.chomp
     Git.branches.select do |v| 
       if v =~ /#{new_local_branch}/
-        puts "There is already a local branch called #{new_local_branch}. Use this? (Y/n)"
+        puts "There is already a local branch called #{new_local_branch}. [R]edo or [U]se this branch"
       end
     end
-    if STDIN.gets.chomp == 'Y'
+    if STDIN.gets.chomp == 'U'
+      Git.change_to_branch(new_local_branch)
       break
     else
       redo
