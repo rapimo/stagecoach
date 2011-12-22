@@ -30,6 +30,10 @@ module Stager
     def self.issue(issue_number)
       return RedmineClient::Issue.find(issue_number)
     end
+
+    def self.issue_url(issue)
+      RedmineClient::Base.site + "/issues/" + issue.id
+    end
   end
 
   class Git
@@ -37,7 +41,7 @@ module Stager
       `git branch`.split("\n")
     end
 
-    def self.current_branch
+    def self.current_local_branch
       self.branches.each do |b| 
         if b =~ /\*/
           return b[1..-1].strip
@@ -47,6 +51,14 @@ module Stager
 
     def self.change_to_branch(branch)
       `git checkout #{branch}`
+    end
+
+    def self.new_issue(title, description)
+      `ghi -o "#{title}" -m "#{description}"`
+    end
+
+    def self.view_issue(github_issue)
+      `ghi -u#{github_issue}`
     end
   end
 
@@ -71,7 +83,7 @@ module Stager
   # issue status, currently this is broken.
   # More information at http://www.redmine.org/boards/2/topics/25920
   def test_issue
-    issue_url = RedmineClient::Base.site + "/issues/" + @issue.id
+    issue_url = Redmine.issue_url(@issue)
     issue_hash = @issue.status.attributes
     if issue_hash['name'] == 'Feedback'
       puts 'Feedback changed successfully!'
@@ -118,9 +130,21 @@ module Stager
     redo
   end
 
+  # Create a Github issue referencing the planio issue
+  puts "Creating Git issue with subject: " + @issue.subject
+  puts "#Testing: Push enter to create or anything else to continue without creating an issue"
+  body = "Planio issue: #{Redmine.issue_url(@issue)} \n\n #{@issue.description}"
+
+  console_output =  Git.new_issue(@issue.subject, body) if STDIN.gets == "\n"
+  github_issue_id = console_output[/\d+/]
+  puts "Would you like to edit the issue on Github? [Y]es or [N]o"
+
+  `open #{Git.view_issue(github_issue_id)}` if STDIN.gets.chomp == 'Y'
+   
+
   # Create a local git branch for this issue
   loop do
-    Git.current_branch
+    Git.current_local_branch
     puts "Please enter a local branch name for issue: \"#{@issue.subject}\""
     new_local_branch = STDIN.gets.chomp
     Git.branches.select do |v| 
@@ -138,7 +162,7 @@ module Stager
 
   # Make sure this is the correct git branch
   loop do
-    puts "You are currently in local branch: #{ Git.current_branch.red } \nIs this correct? (Y/n):"
+    puts "You are currently in local branch: #{ Git.current_local_branch.red } \nIs this correct? ([Y]es or [N]o):"
     if STDIN.gets.chomp == "Y"
       break
     else
@@ -157,13 +181,8 @@ module Stager
   end
 
   # Create a remote git branch
-  puts "Enter new remote branch name (eg. #{@local_branch}):"
+  puts "Enter new remote branch name (eg. #{Git.current_local_branch}):"
   branch = STDIN.gets.strip
-
-
-  # Testing stuff, the API can not currently change issue status: see
-  # http://www.redmine.org/boards/2/topics/25920
-  puts @issue.status.attributes
 
   # Get things rolling,  if everything else is OK.
   puts "Continue? Type 'push' to start script or anything else to cancel:"
