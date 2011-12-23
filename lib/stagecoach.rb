@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
-require 'redmine_client'
-require 'ghi'
-require 'yaml'
 
 class String
   def red; colorize(self, "\e[1m\e[31m"); end
@@ -11,57 +8,6 @@ class String
 end
 
 module Stagecoach
-  class Config
-    def self.open
-      File.open('lib/config.yaml', 'r+')
-    end
-
-    def self.yaml_to_hash 
-      YAML::load(self.open)
-    end
-
-    def self.save(hash, config_file)
-      config_file.pos = 0
-      config_file.write(hash.to_yaml)
-    end
-  end
-
-  class Redmine
-    def self.issue(issue_number)
-      return RedmineClient::Issue.find(issue_number)
-    end
-
-    def self.issue_url(issue)
-      RedmineClient::Base.site + "/issues/" + issue.id
-    end
-  end
-
-  class Git
-    def self.branches
-      `git branch`.split("\n")
-    end
-
-    def self.current_local_branch
-      self.branches.each do |b| 
-        if b =~ /\*/
-          return b[1..-1].strip
-        end
-      end
-    end
-
-    def self.change_to_branch(branch)
-      `git checkout #{branch}`
-    end
-
-    def self.new_issue(title, description)
-      `ghi -o "#{title}" -m "#{description}"`
-    end
-
-    def self.view_issue(github_issue)
-      `ghi -u#{github_issue}`
-    end
-  end
-
   def self.line_break
     puts  ("-" * 50)
     sleep 0.5
