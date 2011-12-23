@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "stagecoach"
   gem.homepage = "http://github.com/omnikron/stagecoach"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Stagecoach is in ur Redmine, automating ur Git workflow.}
+  gem.description = %Q{Git/capistrano workflow automation script with Redmine & Github issue integration}
   gem.email = "o.barnett@digitaleseiten.de"
   gem.authors = ["Oli Barnett"]
   # dependencies defined in Gemfile
