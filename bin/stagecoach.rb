@@ -1,6 +1,16 @@
 #! usr/bin/env ruby
 # encoding: utf-8
 require '../lib/stagecoach.rb'
+require 'trollop'
+
+opts = Trollop::options do
+#  opt :start, "Switches to master branch and does 'git pull', then asks you to name your new branch"
+#  opt :finish, "Links up to a given planio issue, ties all your commits together and pushes them before merging to staging and deploying"
+   opt :branch, "Enter your new branch name here"
+   opt :issue, "Enter your planio issue number here"
+end
+
+
 
 module Stagecoach
   # Set up configuration variables
@@ -14,6 +24,8 @@ module Stagecoach
     self.password = 'no_password_needed_with_api_key'
   end
 
+  # Saves issue number if one was entered at command line
+  config["issue_number"] = opts[:branch] if opts[:branch]
 
   # Planio issue link-up 
   loop do
