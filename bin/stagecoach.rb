@@ -25,7 +25,7 @@ module Stagecoach
   end
 
   # Saves issue number if one was entered at command line
-  config["issue_number"] = opts[:branch] if opts[:branch]
+  config["issue_number"] = opts[:issue] if opts[:issue]
 
   # Planio issue link-up 
   loop do
