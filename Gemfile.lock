@@ -15,6 +15,7 @@ GEM
     redmine_client (0.0.1)
       activeresource (~> 2.3.0)
     shoulda (2.11.3)
+    trollop (1.16.2)
 
 PLATFORMS
   ruby
@@ -26,3 +27,4 @@ DEPENDENCIES
   rcov
   redmine_client
   shoulda
+  trollop
