@@ -1,4 +1,6 @@
+#! usr/bin/env ruby
 # encoding: utf-8
+require '../lib/stagecoach.rb'
 
 module Stagecoach
   # Set up configuration variables

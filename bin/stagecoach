@@ -1,7 +1,0 @@
-#! usr/bin/env ruby
-
-require '../lib/stagecoach/config'
-require '../lib/stagecoach/git'
-require '../lib/stagecoach/redmine'
-require '../lib/stagecoach/stagecoach'
-require '../lib/command_line.rb'
