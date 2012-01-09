@@ -1,16 +1,6 @@
 # encoding: utf-8
 
-require '../lib/stagecoach/config'
-require '../lib/stagecoach/git'
-require '../lib/stagecoach/redmine'
-
 module Stagecoach
-
-  def self.line_break
-    puts  ("-" * 50)
-    sleep 0.5
-  end
-
   # Set up configuration variables
   config = Config.yaml_to_hash
   config_file = Config.open

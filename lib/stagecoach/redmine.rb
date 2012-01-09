@@ -21,7 +21,7 @@ module Stagecoach
         puts 'Feedback changed successfully!'
         puts "View issue: #{issue_url}"
       else
-        puts "Sorry, the Redmine API doesn't currently support changing of issue status via API.  Please change it here (⌘ + click):"
+        puts "Sorry, the Redmine API doesn't currently support changing of issue status via API.  Please change it here:"
         puts issue_url
       end
     end
