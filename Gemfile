@@ -1,7 +1,7 @@
 source "http://rubygems.org"
-require 'redmine_client'
-require 'ghi'
-require 'yaml'
+
+gem 'redmine_client'
+gem 'ghi'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

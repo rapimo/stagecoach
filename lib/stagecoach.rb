@@ -1,18 +1,16 @@
-#!/usr/bin/env ruby
 # encoding: utf-8
 
-class String
-  def red; colorize(self, "\e[1m\e[31m"); end
-  def green; colorize(self, "\e[32m"); end
-  def colorize(text, color_code)  "#{color_code}#{text}\e[0m" end
-end
+require '../lib/stagecoach/config'
+require '../lib/stagecoach/git'
+require '../lib/stagecoach/redmine'
+
 
 module Stagecoach
+
   def self.line_break
     puts  ("-" * 50)
     sleep 0.5
   end
-
 
   # Set up configuration variables
   config = Config.yaml_to_hash
