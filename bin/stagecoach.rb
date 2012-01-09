@@ -3,31 +3,37 @@
 require '../lib/stagecoach.rb'
 require 'trollop'
 
-opts = Trollop::options do
-#  opt :start, "Switches to master branch and does 'git pull', then asks you to name your new branch"
-#  opt :finish, "Links up to a given planio issue, ties all your commits together and pushes them before merging to staging and deploying"
-   opt :branch, "Enter your new branch name here"
-   opt :issue, "Enter your planio issue number here"
-end
 
 
 
 module Stagecoach
-  # Set up configuration variables
+  # Command line options thanks to Trollop.
+  opts = Trollop::options do
+     opt :skip, "Use this option to skip to deploy if you have already pulled from master and created your new branch"
+     opt :branch, "Enter your new branch name here", :type => :string
+     opt :issue, "Enter your planio issue number here,  e.g. stagecoach -i 4115", :type  => :string
+  end
+
+  # Set up configuration variables.
   config = Config.yaml_to_hash
   config_file = Config.open
 
-  # Set up redmine_client config 
+  # Set up redmine_client config.
   RedmineClient::Base.configure do
     self.site = config["redmine_site"]
     self.user = config["redmine_api_key"]
-    self.password = 'no_password_needed_with_api_key'
   end
 
-  # Saves issue number if one was entered at command line
+  # Saves issue number if one was entered at command line.
   config["issue_number"] = opts[:issue] if opts[:issue]
 
-  # Planio issue link-up 
+  unless opts[:skip]
+    # Creates a new branch unless this has been done manually.
+
+  end
+
+
+  # Planio issue link-up.
   loop do
     if issue_number = config["issue_number"]
       puts "Current plan.io issue is #{issue_number}."
@@ -63,7 +69,7 @@ module Stagecoach
     redo
   end
 
-  # Create a Github issue referencing the planio issue
+  # Create a Github issue referencing the planio issue.
   puts "Creating Git issue with subject: " + @issue.subject
   puts "#Testing: Push enter to create or anything else to continue without creating an issue"
   body = "Planio issue: #{Redmine.issue_url(@issue)} \n\n #{@issue.description}"
@@ -77,7 +83,7 @@ module Stagecoach
   puts "Hit any key once you are done editing to continue"
   sleep unless STDIN.gets.chomp
 
-  # Create a local git branch for this issue
+  # Create a local git branch for this issue.
   loop do
     Git.current_local_branch
     puts "Please enter a local branch name for issue: \"#{@issue.subject}\""
@@ -92,7 +98,7 @@ module Stagecoach
     break
   end
 
-# Make sure this is the correct git branch
+# Make sure this is the correct git branch.
 loop do
   puts "You are currently in local branch: #{Git.current_local_branch.red} \nIs this correct? ([Y]es or [N]o):"
   if STDIN.gets.chomp == "Y"
@@ -112,7 +118,7 @@ loop do
   end
 end
 
-# Create a remote git branch
+# Create a remote git branch.
 puts "Enter new remote branch name (eg. #{Git.current_local_branch}):"
 branch = STDIN.gets.strip
 
