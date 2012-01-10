@@ -1,8 +1,11 @@
-
 module Stagecoach
   class Git
     def self.branches
       `git branch`.split("\n")
+    end
+
+    def self.changes
+      `git diff-files --name-status -r --ignore-submodules`
     end
 
     def self.current_local_branch

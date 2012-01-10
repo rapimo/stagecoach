@@ -1,19 +1,37 @@
-= stagecoach
+= Stagecoach
 
-Description goes here.
+Flags
+  -branch, -b <s>:   Enter your new branch name here
+  -issue, -i <s> :   Enter your planio issue number here,  e.g. stagecoach -i 4115
+  -deploy, -d    :   Use this option to skip straight to push & deploy
+  -help, -h      :   Show this message
 
-== Contributing to stagecoach
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
-* Fork the project
-* Start a feature/bugfix branch
-* Commit and push until you are happy with your contribution
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+Sample usage:
+  stagecoach -i[ssue] 4115 -b[ranch] new_branch_name
+  [code, commit] * n
+  stagecoach -d[eploy]
 
-== Copyright
+Stagecoach works in two stages.  When supplied with a planio issue number and a
+new branch name it does:
 
-Copyright (c) 2011 Oli Barnett. See LICENSE.txt for
-further details.
+  checkout master
+  git pull
+  git checkout -b <new_branch_name>
 
+Then you can code and commit, code and commit until your feature or fix is
+ready.
+
+Once this is done you can run 
+
+  stagecoach -d[eploy]
+
+This automates the entire workflow for you as follows:
+
+  git push origin new_branch_name
+  git checkout staging
+  git pull
+  git merge task_name
+  git push origin staging
+  cap staging deploy
+  [attempts to set planio ticket to 'feedback' status - currently unsupported by 
+  the redmine API and must be done manually]
