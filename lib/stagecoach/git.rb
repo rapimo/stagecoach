@@ -4,8 +4,8 @@ module Stagecoach
       `git branch`.split("\n")
     end
 
-    def self.status
-      `git diff --exit-code`
+    def self.changes
+      `git diff-files --name-status -r --ignore-submodules`
     end
 
     def self.current_local_branch
