@@ -1,10 +1,10 @@
 = Stagecoach
 
 == Flags
---branch, -b <s>:   Enter your new branch name here
---issue, -i <s>:   Enter your planio issue number here,  e.g. stagecoach -i 4115
---deploy, -d:   Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
---help, -h:   Show this message
+-branch, -b <s>:   Enter your new branch name here
+-issue, -i <s>:   Enter your planio issue number here,  e.g. stagecoach -i 4115
+-deploy, -d:   Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
+-help, -h:   Show this message
 
 Sample usage:
 * stagecoach -i[ssue] 4115 -b[ranch] new_branch_name
