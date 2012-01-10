@@ -25,7 +25,11 @@ module Stagecoach
     end
 
     def self.status
-      `git status`
+      if `git status` =~ /Your branch is ahead of/
+        return "commits"
+      else
+        return "no_commits"
+      end
     end
 
     def self.view_issue(github_issue)
