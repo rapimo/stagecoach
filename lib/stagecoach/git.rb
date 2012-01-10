@@ -24,6 +24,10 @@ module Stagecoach
       `ghi -o "#{title}" -m "#{description}"`
     end
 
+    def self.status
+      `git status`
+    end
+
     def self.view_issue(github_issue)
       `ghi -u#{github_issue}`
     end
