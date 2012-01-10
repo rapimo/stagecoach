@@ -20,6 +20,11 @@ module Stagecoach
   # Saves issue number to config.yaml if one was entered at command line.
   config["issue_number"] = opts[:issue] if opts[:issue]
 
+  # Checks that command-line args are present and correct.
+  Trollop::die :issue, "Issue number can only contain digits" if opts[:issue][/\D/]
+  Trollop::die :branch, "Branch name must be longer than 1 character" if opts[:branch].length >= 1
+  Trollop::die :deploy, "You have no uncommitted changes, do some coding before running deploy" if Git.changes.size <= 1
+  
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
     if Git.changes.size > 1
