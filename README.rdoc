@@ -1,22 +1,22 @@
 = Stagecoach
 
 == Flags
--branch, -b <s>:   Enter your new branch name here
--issue, -i <s>:   Enter your planio issue number here,  e.g. stagecoach -i 4115
--deploy, -d:   Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
--help, -h:   Show this message
+  -branch, -b <s>:   Enter your new branch name here
+  -issue, -i <s>:   Enter your planio issue number here,  e.g. stagecoach -i 4115
+  -deploy, -d:   Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
+  -help, -h:   Show this message
 
 Sample usage:
-* stagecoach -i[ssue] 4115 -b[ranch] new_branch_name
-* [code, commit] * n
-* stagecoach -d[eploy]
+  stagecoach -i[ssue] 4115 -b[ranch] new_branch_name
+  [code, commit] * n
+  stagecoach -d[eploy]
 
 Stagecoach works in two stages.  When supplied with a planio issue number and a
 new branch name it does:
 
-* checkout master
-* git pull
-* git checkout -b <new_branch_name>
+  checkout master
+  git pull
+  git checkout -b <new_branch_name>
 
 Then you can code and commit, code and commit until your feature or fix is
 ready.
@@ -25,13 +25,13 @@ Once this is done you can run stagecoach -d[eploy]
 
 This automates the entire workflow for you as follows:
 
-* git push origin new_branch_name
-* git checkout staging
-* git pull
-* git merge task_name
-* git push origin staging
-* cap staging deploy
-* [attempts to set planio ticket to 'feedback' status - currently this is not supported by the redmine API and must be done manually]
+  git push origin new_branch_name
+  git checkout staging
+  git pull
+  git merge task_name
+  git push origin staging
+  cap staging deploy
+  [attempts to set planio ticket to 'feedback' status - currently this is not supported by the redmine API and must be done manually]
 
 == Contributing to stagecoach
 
@@ -47,4 +47,3 @@ This automates the entire workflow for you as follows:
 
 Copyright (c) 2011 Oli Barnett. See LICENSE.txt for
 further details.
-
