@@ -5,7 +5,7 @@ require '../lib/stagecoach.rb'
 module Stagecoach
   # Command line options courtesy of the Trollop gem.
   # lib/stagecoach/command_line.rb 
-  CommandLine.trollop
+  opts = CommandLine.trollop
 
   # Set up configuration variables.
   config = Config.yaml_to_hash
@@ -17,12 +17,17 @@ module Stagecoach
     self.user = config["redmine_api_key"]
   end
 
-  # Saves issue number if one was entered at command line.
+  # Saves issue number to config.yaml if one was entered at command line.
   config["issue_number"] = opts[:issue] if opts[:issue]
 
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
-
+    if Git.status
+      puts "You have uncommitted changes:".red
+      puts `git diff-files --name-status -r --ignore-submodules`
+      puts "Please commit or stash these changes before running Stagecoach, or \nuse the -d flag if you meant to deploy your commits. -h for help."
+      exit
+    end 
 
     # Creates a new branch unless this has been done manually.
     CommandLine.line_break  

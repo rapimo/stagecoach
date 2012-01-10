@@ -1,8 +1,11 @@
-
 module Stagecoach
   class Git
     def self.branches
       `git branch`.split("\n")
+    end
+
+    def self.status
+      `git diff-index --quiet HEAD`
     end
 
     def self.current_local_branch

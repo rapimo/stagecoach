@@ -7,7 +7,7 @@ module Stagecoach
     def self.trollop
       require 'trollop'
       # Command line options using Trollop.
-      opts = Trollop::options do
+      Trollop::options do
         banner <<-EOS
 
 #{"Sample usage:".green}
