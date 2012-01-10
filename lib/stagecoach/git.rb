@@ -5,7 +5,7 @@ module Stagecoach
     end
 
     def self.status
-      `git diff-index --quiet HEAD`
+      `git diff --exit-code`
     end
 
     def self.current_local_branch
