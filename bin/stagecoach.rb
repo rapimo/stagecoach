@@ -1,18 +1,11 @@
 #! usr/bin/env ruby
 # encoding: utf-8
 require '../lib/stagecoach.rb'
-require 'trollop'
-
-
-
 
 module Stagecoach
-  # Command line options thanks to Trollop.
-  opts = Trollop::options do
-     opt :skip, "Use this option to skip to deploy if you have already pulled from master and created your new branch"
-     opt :branch, "Enter your new branch name here", :type => :string
-     opt :issue, "Enter your planio issue number here,  e.g. stagecoach -i 4115", :type  => :string
-  end
+  # Command line options courtesy of the Trollop gem.
+  # lib/stagecoach/command_line.rb 
+  CommandLine.trollop
 
   # Set up configuration variables.
   config = Config.yaml_to_hash
@@ -27,9 +20,22 @@ module Stagecoach
   # Saves issue number if one was entered at command line.
   config["issue_number"] = opts[:issue] if opts[:issue]
 
-  unless opts[:skip]
-    # Creates a new branch unless this has been done manually.
+  unless opts[:deploy]
+    # Checks for uncommitted/unstashed changes and aborts if present.
 
+
+    # Creates a new branch unless this has been done manually.
+    CommandLine.line_break  
+
+    puts "Switching to master branch and pulling changes:"
+    puts `git checkout master`
+    puts `git pull`
+    if opts[:branch]
+      puts `git checkout -b #{opts[:branch]}`
+    else  
+      puts "Please enter a new git branch name for your changes:"
+      opts[:branch] = gets.chomp
+    end
   end
 
 
@@ -128,22 +134,22 @@ unless STDIN.gets.chomp == 'push'
   exit
 end
 
-line_break
+CommandLine.line_break
 puts "Pushing your changes to branch '#{branch}'"
 puts `git push origin #{@local_branch}:#{branch}`
-line_break
+CommandLine.line_break
 puts "Merging into staging (after pull updates)"
 puts `git checkout staging`
 puts `git pull origin staging`
 puts `git merge #{branch}`
-line_break
+CommandLine.line_break
 puts "Pushing to staging"
 puts `git push origin staging`
-line_break
+CommandLine.line_break
 puts "Deploying staging"
 puts `bundle exec cap staging deploy`
 puts `git checkout master`
-line_break
+CommandLine.line_break
 puts "Attempting to change Planio ticket status to 'Feedback' for you"
 @issue.status.id = 4
 @issue.save
