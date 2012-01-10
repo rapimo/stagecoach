@@ -35,15 +35,15 @@ module Stagecoach
     if Git.changes.size > 1
       puts "You have uncommitted changes:".red
       puts Git.changes
-      puts "Please commit or stash these changes before running Stagecoach, or \nuse the -d flag if you meant to deploy your commits. -h for help."
+      puts "Please commit or stash these changes before running Stagecoach. -h for help."
       exit
     end 
 
     # Creates a new branch unless this has been done manually.
     CommandLine.line_break  
-
-    puts "Switching to master branch and pulling changes:"
+    puts "Switching to master branch:"
     puts `git checkout master`
+    puts "Pulling changes:"
     puts `git pull`
     if opts[:branch]
       puts `git checkout -b #{opts[:branch]}`
@@ -51,6 +51,7 @@ module Stagecoach
       puts "Please enter a new git branch name for your changes (branch will be created):"
       puts `git checkout -b #{gets.chomp}`
     end
+    puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
 
   if opts[:deploy]
