@@ -22,9 +22,10 @@ module Stagecoach
 
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
-    if Git.status
+    if Git.changes.size > 1
       puts "You have uncommitted changes:".red
-      puts `git diff-files --name-status -r --ignore-submodules`
+      puts "size: #{Git.changes.size}"
+      puts Git.changes
       puts "Please commit or stash these changes before running Stagecoach, or \nuse the -d flag if you meant to deploy your commits. -h for help."
       exit
     end 
@@ -38,8 +39,8 @@ module Stagecoach
     if opts[:branch]
       puts `git checkout -b #{opts[:branch]}`
     else  
-      puts "Please enter a new git branch name for your changes:"
-      opts[:branch] = gets.chomp
+      puts "Please enter a new git branch name for your changes (branch will be created):"
+      puts `git checkout -b #{gets.chomp}`
     end
   end
 
