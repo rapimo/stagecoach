@@ -22,7 +22,7 @@ module Stagecoach
 
   # Checks that command-line args are present and correct.
   Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
-  Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length >= 1
+  Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
   Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy]
   
   unless opts[:deploy]
