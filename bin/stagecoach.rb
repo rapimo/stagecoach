@@ -23,7 +23,7 @@ module Stagecoach
   Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
   Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
   Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.status == "no_commits"
-  
+
   # Saves the issue number for later.
   if opts[:issue]
     config["issue_number"] = opts[:issue] 
@@ -46,10 +46,22 @@ module Stagecoach
     puts "Pulling changes:"
     puts `git pull`
     if opts[:branch]
-      puts `git checkout -b #{opts[:branch]}`
+      new_local_branch = opts[:branch]
     else  
       puts "Please enter a new git branch name for your changes (branch will be created):"
-      puts `git checkout -b #{gets.chomp}`
+      new_local_branch = gets.chomp
+    end
+
+    # Make sure new local branch does not already exist.
+    loop do
+      Git.branches.select do |v| 
+        if v =~ /#{new_local_branch}/
+          puts "There is already a local branch called #{new_local_branch}. [Q]uit or [U]se this branch"
+          exit unless gets.chomp == 'U'
+        end
+      end
+      Git.change_to_branch(new_local_branch)
+      break
     end
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
@@ -99,27 +111,11 @@ module Stagecoach
     console_output =  Git.new_issue(@issue.subject, body)
     github_issue_id = console_output[/\d+/]
     puts "Would you like to edit the issue on Github? [Y]es or [N]o"
-      if STDIN.gets.chomp == 'Y'
-        `open #{Git.view_issue(github_issue_id)}` 
-        puts "Hit any key once you are done editing to continue"
-        sleep unless STDIN.gets.chomp
-      else
-        break
-      end
-
-    # Make sure we are still on the right branch 
-    loop do
-      Git.current_local_branch
-      puts "Please enter a local branch name for issue: \"#{@issue.subject}\""
-      new_local_branch = STDIN.gets.chomp
-      Git.branches.select do |v| 
-        if v =~ /#{new_local_branch}/
-          puts "There is already a local branch called #{new_local_branch}. [R]edo or [U]se this branch"
-          redo unless gets.chomp == 'R'
-        end
-      end
-      Git.change_to_branch(new_local_branch)
-      break
+    if STDIN.gets.chomp == 'Y'
+      `open #{Git.view_issue(github_issue_id)}` 
+      puts "Hit any key once you are done editing to continue"
+      sleep unless STDIN.gets.chomp
+    else
     end
 
     # Make sure this is the correct git branch.
