@@ -10,7 +10,7 @@ module Stagecoach
       YAML::load(self.open)
     end
 
-    def self.save(hash, config_file)
+    def self.save(hash, config_file = Config.open)
       config_file.pos = 0
       config_file.write(hash.to_yaml)
     end
@@ -20,7 +20,10 @@ module Stagecoach
       redmine_repo = STDIN.gets.chomp
       puts "Enter your API key for that repo:"
       redmine_api_key = STDIN.gets.chomp
-      self.init(redmine_repo, redmine_api_key)
+
+      config_hash = {"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key}
+
+      self.save(config_hash)
     end
   end
 end
