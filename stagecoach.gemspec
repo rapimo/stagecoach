@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
     "lib/stagecoach/config.rb",
     "lib/stagecoach/git.rb",
     "lib/stagecoach/redmine.rb",
-    "pkg/stagecoach-0.1.0.gem",
     "pkg/stagecoach-0.2.0.gem",
     "stagecoach.gemspec",
     "test/helper.rb",
