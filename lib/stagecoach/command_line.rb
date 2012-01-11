@@ -31,10 +31,9 @@ This automates the entire workflow for you as follows:
   git checkout staging
   git pull
   git merge task_name
-  git push origin staging
-  cap staging deploy
   [attempts to set planio ticket to 'feedback' status - currently this is not supported by the redmine API and must be done manually]
-
+ 
+#{"Flags".red}
         EOS
         opt :deploy, "Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch"
         opt :branch, "Enter your new branch name here", :type => :string
