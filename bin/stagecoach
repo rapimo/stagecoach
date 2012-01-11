@@ -12,8 +12,8 @@ module Stagecoach
   config_file = Config.open
 
   # Checks that config params have been set and makes you set em if not
-  Config.setup if config["redmine_site"] == "enter.your.redmine.repository.here" 
-  Config.setup if config["redmine_api"]  == "enter_your_API_key_here" 
+  Config.setup if config["redmine_site"] == "none" 
+  Config.setup if config["redmine_api"]  == "none" 
 
   
   # Set up redmine_client config.
