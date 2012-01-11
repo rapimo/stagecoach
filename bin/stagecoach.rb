@@ -60,6 +60,7 @@ module Stagecoach
             Git.change_to_branch(branch)
             break
           else
+            puts "Exiting..."
             exit
           end
         end
