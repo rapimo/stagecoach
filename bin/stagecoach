@@ -11,6 +11,11 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
+  # Checks that config params have been set and makes you set em if not
+  Config.setup if config["redmine_site"] == "enter.your.redmine.repository.here" 
+  Config.setup if config["redmine_api"]  == "enter_your_API_key_here" 
+
+  
   # Set up redmine_client config.
   RedmineClient::Base.configure do
     self.site = config["redmine_site"]
@@ -21,6 +26,12 @@ module Stagecoach
   Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
   Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
   Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.status == "no_commits"
+
+  # For changing the Redmine Repo and API key
+  if opts[:setup]
+    Config.setup
+  end
+
 
   # Saves the issue number for later.
   if opts[:issue]
