@@ -52,7 +52,7 @@ module Stagecoach
     end
 
     # Make sure new local branch does not already exist.
-    if Git.branches.include?(branch)
+    if Git.branches.find { |e| /#{branch}/ =~ e }
       puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
       if gets.chomp == 'U'
         Git.change_to_branch(branch)
