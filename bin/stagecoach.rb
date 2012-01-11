@@ -52,21 +52,19 @@ module Stagecoach
     end
 
     # Make sure new local branch does not already exist.
-    loop do
-      Git.branches.select do |v| 
-        if v =~ /#{branch}/
-          puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
-          if gets.chomp == 'U'
-            Git.change_to_branch(branch)
-            break
-          else
-            puts "Exiting..."
-            exit
-          end
+    Git.branches.select do |v| 
+      if v =~ /#{branch}/
+        puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
+        if gets.chomp == 'U'
+          Git.change_to_branch(branch)
+          break
+        else
+          puts "Exiting..."
+          exit
         end
+      else
+        Git.new_branch(branch)
       end
-      Git.new_branch(branch)
-      break
     end
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
