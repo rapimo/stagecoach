@@ -17,8 +17,6 @@ module Stagecoach
     self.user = config["redmine_api_key"]
   end
 
-  # Saves issue number to config.yaml if one was entered at command line.
-
   # Checks that command-line args are present and correct.
   Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
   Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
@@ -48,13 +46,13 @@ module Stagecoach
       branch = opts[:branch]
     else  
       puts "Please enter a new git branch name for your changes (branch will be created):"
-      branch = gets.chomp
+      branch = STDIN.gets.chomp
     end
 
     # Make sure new local branch does not already exist.
     if Git.branches.find { |e| /#{branch}/ =~ e }
       puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
-      if gets.chomp == 'U'
+      if STDIN.gets.chomp == 'U'
         Git.change_to_branch(branch)
       else
         puts "Exiting..."
