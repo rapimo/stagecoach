@@ -129,16 +129,12 @@ module Stagecoach
         end
         @desired_branch = Git.branches[STDIN.gets.chomp.to_i]
         if @desired_branch =~ /\*/
-          `git checkout #{@desired_branch[1..-1]}`
+          Git.change_to_branch(@desired_branch[1..-1])
         else
-          `git checkout #{@desired_branch}`
+          Git.change_to_branch(@desired_branch)
         end
       end
     end
-
-    # Create a remote git branch.
-    puts "Enter new remote branch name (eg. #{Git.current_local_branch}):"
-    branch = STDIN.gets.strip
 
     # Get things rolling,  if everything else is OK.
     puts "Continue? Type 'push' to start script or anything else to cancel:"
@@ -148,10 +144,10 @@ module Stagecoach
 
     CommandLine.line_break
     puts "Pushing your changes to branch '#{branch}'"
-    puts `git push origin #{@local_branch}:#{branch}`
+    puts `git push origin #{branch}`
     CommandLine.line_break
     puts "Merging into staging (after pull updates)"
-    puts `git checkout staging`
+    Git.change_to_branch("staging")
     puts `git pull origin staging`
     puts `git merge #{branch}`
     CommandLine.line_break
@@ -160,7 +156,8 @@ module Stagecoach
     CommandLine.line_break
     puts "Deploying staging"
     puts `bundle exec cap staging deploy`
-    puts `git checkout master`
+    puts "Changing to master branch"
+    Git.change_to_branch("master")
     CommandLine.line_break
     puts "Attempting to change Planio ticket status to 'Feedback' for you"
     @issue.status.id = 4
