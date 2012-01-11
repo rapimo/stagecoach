@@ -56,7 +56,6 @@ module Stagecoach
       puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
       if gets.chomp == 'U'
         Git.change_to_branch(branch)
-        break
       else
         puts "Exiting..."
         exit
