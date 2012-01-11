@@ -3,10 +3,10 @@ require 'yaml'
 module Stagecoach
   class Config
     
-    config_file_location = (File.dirname(__FILE__) + '/config.yaml', 'r+')
+    @config_file_location = (File.dirname(__FILE__) + '/config.yaml')
      
     def self.open
-      File.open(config_file_location)
+      File.open(@config_file_location, 'r+')
     end
 
     def self.yaml_to_hash 
@@ -26,7 +26,7 @@ module Stagecoach
       config_hash = {"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key}
 
       # Erase the config file and make a new one to prevent problems
-      File.delete(config_file_location)
+      File.delete(@config_file_location)
 
       self.save(config_hash)
     end
