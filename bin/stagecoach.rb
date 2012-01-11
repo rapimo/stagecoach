@@ -55,7 +55,7 @@ module Stagecoach
     # Make sure new local branch does not already exist.
     loop do
       Git.branches.select do |v| 
-        if v =~ /#{new_local_branch}/
+        if v =~ /#{branch}/
           puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
           exit unless gets.chomp == 'U'
         end
