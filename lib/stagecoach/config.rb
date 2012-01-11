@@ -25,9 +25,6 @@ module Stagecoach
 
       config_hash = {"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key}
 
-      # Erase the config file and make a new one to prevent problems
-      File.delete(@config_file_location)
-
       self.save(config_hash)
     end
   end
