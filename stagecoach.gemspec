@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = "2012-01-11"
   s.description = "Git/capistrano workflow automation script with Redmine & Github issue integration"
   s.email = "o.barnett@digitaleseiten.de"
-  s.executables = ["stagecoach.rb"]
+  s.executables = ["stagecoach"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -26,15 +26,13 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "bin/stagecoach.rb",
+    "bin/stagecoach",
     "lib/.DS_Store",
-    "lib/config.yaml",
     "lib/stagecoach.rb",
     "lib/stagecoach/command_line.rb",
     "lib/stagecoach/config.rb",
     "lib/stagecoach/git.rb",
     "lib/stagecoach/redmine.rb",
-    "pkg/stagecoach-0.2.0.gem",
     "stagecoach.gemspec",
     "test/helper.rb",
     "test/test_stagecoach.rb"
