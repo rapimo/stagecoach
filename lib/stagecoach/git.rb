@@ -16,6 +16,10 @@ module Stagecoach
       end
     end
 
+    def self.new_branch(branch)
+      `git checkout -b #{branch}`
+    end
+
     def self.change_to_branch(branch)
       `git checkout #{branch}`
     end
