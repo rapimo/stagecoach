@@ -3,7 +3,7 @@ require 'yaml'
 module Stagecoach
   class Config
     def self.open
-      File.open('../lib/config.yaml', 'r+')
+      File.open('config.yaml', 'r+')
     end
 
     def self.yaml_to_hash 
