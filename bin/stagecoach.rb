@@ -39,7 +39,7 @@ module Stagecoach
       exit
     end 
 
-    # Creates a new branch unless this has been done manually.
+    # Change to master, pull changes, and create a new branch
     CommandLine.line_break  
     puts `git checkout master`
     puts "Pulling changes:"
