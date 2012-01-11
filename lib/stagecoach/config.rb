@@ -30,13 +30,19 @@ module Stagecoach
         config_hash = {"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key}
 
         self.save(config_hash)
-
+        
+        CommandLine.line_break
         puts "Settings saved OK:"
         puts "Repository:" + redmine_repo
         puts "API Key:   " + redmine_api_key
-        puts "Continue? [Y]es or [N]o"
-        break if STDIN.gets.chomp == 'Y'
-        redo if STDIN.gets.chomp == 'N'
+        CommandLine.line_break
+        puts "[Q]uit or [R]edo"
+        if STDIN.gets.chomp == 'Q'
+          exit
+        else
+          redo
+        end
+
       end 
     end
   end
