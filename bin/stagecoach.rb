@@ -99,11 +99,13 @@ module Stagecoach
     console_output =  Git.new_issue(@issue.subject, body)
     github_issue_id = console_output[/\d+/]
     puts "Would you like to edit the issue on Github? [Y]es or [N]o"
-
-    `open #{Git.view_issue(github_issue_id)}` if STDIN.gets.chomp == 'Y'
-
-    puts "Hit any key once you are done editing to continue"
-    sleep unless STDIN.gets.chomp
+      if STDIN.gets.chomp == 'Y'
+        `open #{Git.view_issue(github_issue_id)}` 
+        puts "Hit any key once you are done editing to continue"
+        sleep unless STDIN.gets.chomp
+      else
+        break
+      end
 
     # Make sure we are still on the right branch 
     loop do
