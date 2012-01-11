@@ -41,7 +41,6 @@ module Stagecoach
 
     # Creates a new branch unless this has been done manually.
     CommandLine.line_break  
-    puts "Switching to master branch:"
     puts `git checkout master`
     puts "Pulling changes:"
     puts `git pull`
@@ -61,7 +60,6 @@ module Stagecoach
         end
       end
       Git.new_branch(branch)
-      Git.change_to_branch(branch)
       break
     end
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
