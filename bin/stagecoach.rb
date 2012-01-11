@@ -46,21 +46,22 @@ module Stagecoach
     puts "Pulling changes:"
     puts `git pull`
     if opts[:branch]
-      new_local_branch = opts[:branch]
+      branch = opts[:branch]
     else  
       puts "Please enter a new git branch name for your changes (branch will be created):"
-      new_local_branch = gets.chomp
+      branch = gets.chomp
     end
 
     # Make sure new local branch does not already exist.
     loop do
       Git.branches.select do |v| 
         if v =~ /#{new_local_branch}/
-          puts "There is already a local branch called #{new_local_branch}. [Q]uit or [U]se this branch"
+          puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
           exit unless gets.chomp == 'U'
         end
       end
-      Git.change_to_branch(new_local_branch)
+      Git.new_branch(branch)
+      Git.change_to_branch(branch)
       break
     end
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
