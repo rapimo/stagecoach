@@ -21,6 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Git/capistrano workflow automation script with Redmine & Github issue integration}
   gem.email = "o.barnett@digitaleseiten.de"
   gem.authors = ["Oli Barnett"]
+  s.executables = ['stagecoach']
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
