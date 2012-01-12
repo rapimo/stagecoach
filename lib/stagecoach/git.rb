@@ -29,7 +29,7 @@ module Stagecoach
     end
 
     def self.unpushed_commits?
-      if `git log origin/master..HEAD`.length > 1
+      if `git log --branches --not --remotes`.length > 1
         return "1"
       else
         return "0"
