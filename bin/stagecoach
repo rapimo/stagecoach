@@ -168,6 +168,7 @@ module Stagecoach
     Git.push('staging')
     CommandLine.line_break
     puts "Deploying staging"
+    Capistrano.deploy(staging)
     puts `bundle exec cap staging deploy`
     puts "Changing to master branch"
     Git.change_to_branch("master")
