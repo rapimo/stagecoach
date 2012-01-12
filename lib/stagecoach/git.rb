@@ -28,7 +28,7 @@ module Stagecoach
       `ghi -o "#{title}" -m "#{description}"`
     end
 
-    def self.status
+    def self.unpushed_commits?
       if `git status` =~ /nothing to commit/
         return "0"
       else
