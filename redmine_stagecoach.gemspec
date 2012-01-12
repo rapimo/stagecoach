@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "lib/.DS_Store",
     "lib/config.yaml",
     "lib/stagecoach.rb",
+    "lib/stagecoach/capistrano.rb",
     "lib/stagecoach/command_line.rb",
     "lib/stagecoach/config.rb",
     "lib/stagecoach/config.yaml",
