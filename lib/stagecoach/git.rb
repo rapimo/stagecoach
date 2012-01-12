@@ -29,10 +29,10 @@ module Stagecoach
     end
 
     def self.status
-      if `git status` =~ /Your branch is ahead of/
-        return "commits"
+      if `git status` =~ /nothing to commit/
+        return "0"
       else
-        return "no_commits"
+        return "1"
       end
     end
 
