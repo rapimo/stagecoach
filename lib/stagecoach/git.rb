@@ -29,10 +29,10 @@ module Stagecoach
     end
 
     def self.unpushed_commits?
-      if `git status` =~ /nothing to commit/
-        return "0"
-      else
+      if `git log origin/master..HEAD`.length > 1
         return "1"
+      else
+        return "0"
       end
     end
 
