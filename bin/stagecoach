@@ -141,11 +141,11 @@ module Stagecoach
           n = Git.branches.index(b)
           puts "#{n}.  " + b
         end
-        @desired_branch = Git.branches[STDIN.gets.chomp.to_i]
-        if @desired_branch =~ /\*/
-          Git.change_to_branch(@desired_branch[1..-1])
+        branch = Git.branches[STDIN.gets.chomp.to_i]
+        if branch =~ /\*/
+          Git.change_to_branch(branch[1..-1])
         else
-          Git.change_to_branch(@desired_branch)
+          Git.change_to_branch(branch)
         end
       end
     end
