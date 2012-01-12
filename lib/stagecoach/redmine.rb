@@ -24,7 +24,8 @@ module Stagecoach
         puts "Sorry, the Redmine API doesn't currently support changing of issue status via API.  Please change it manually:"
         puts issue_url
         puts "Open in browser? [Y]es/[N]o"
-        open issue_url if gets.chomp == "Y"
+        open issue_url.to_s if gets.chomp == "Y"
+        puts "Staging completed!  Exiting..."
       end
     end
   end
