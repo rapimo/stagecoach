@@ -178,6 +178,6 @@ module Stagecoach
     puts "Attempting to change Planio ticket status to 'Feedback' for you"
     @issue.status.id = 4
     @issue.save
-    Redmine.test_issue
+    Redmine.test_issue(@issue)
   end
 end
