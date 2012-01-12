@@ -11,9 +11,6 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
-  # Checks that config params have been set and makes you set em if not
-  Config.setup if config["redmine_site"] == "none" 
-  Config.setup if config["redmine_api"]  == "none" 
 
   
   # Set up redmine_client config.
@@ -22,13 +19,19 @@ module Stagecoach
     self.user = config["redmine_api_key"]
   end
 
-  # Checks that command-line args are present and correct.
-  Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
-  Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
-  Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.unpushed_commits? == "0"
+  if opts[:testing == false]
+    # Checks that config params have been set and makes you set em if not.
+    Config.setup if config["redmine_site"] == "none"
+    Config.setup if config["redmine_api"]  == "none"
+
+    # Checks that command-line args are present and correct.
+    Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
+    Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
+    Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.unpushed_commits? == "0" 
+  end
 
   # For changing the Redmine Repo and API key
-  if opts[:setup]
+  if opts[:setup] && opts[:testing] == false
     Config.setup
   end
 
