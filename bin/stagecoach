@@ -53,9 +53,9 @@ module Stagecoach
 
     # Change to master, pull changes, and create a new branch
     CommandLine.line_break  
-    puts `git checkout master`
+    Git.checkout('master')
     puts "Pulling changes:"
-    puts `git pull`
+    Git.pull
     if opts[:branch]
       branch = opts[:branch]
     else  
@@ -160,7 +160,7 @@ module Stagecoach
 
     CommandLine.line_break
     puts "Pushing your changes to branch '#{branch}'"
-    puts `git push origin #{branch}`
+    Git.push(branch)
     CommandLine.line_break
     puts "Merging into staging (after pull updates)"
     Git.change_to_branch("staging")
@@ -168,7 +168,7 @@ module Stagecoach
     puts `git merge #{branch}`
     CommandLine.line_break
     puts "Pushing to staging"
-    puts `git push origin staging`
+    Git.push('staging')
     CommandLine.line_break
     puts "Deploying staging"
     puts `bundle exec cap staging deploy`
