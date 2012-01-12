@@ -28,11 +28,11 @@ module Stagecoach
       `ghi -o "#{title}" -m "#{description}"`
     end
 
-    def self.status
-      if `git status` =~ /nothing to commit/
-        return "0"
-      else
+    def self.unpushed_commits?
+      if `git log --branches --not --remotes`.length > 1
         return "1"
+      else
+        return "0"
       end
     end
 
