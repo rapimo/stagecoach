@@ -39,6 +39,7 @@ module Stagecoach
     Config.save(config, config_file)
   end
 
+  # Everything except the deploy stage.
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
     if Git.changes.size > 1
@@ -75,6 +76,7 @@ module Stagecoach
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
 
+  # Deploy stage.
   if opts[:deploy]
     # Planio issue link-up.
     loop do
@@ -169,7 +171,6 @@ module Stagecoach
     CommandLine.line_break
     puts "Deploying staging"
     Capistrano.deploy(staging)
-    puts `bundle exec cap staging deploy`
     puts "Changing to master branch"
     Git.change_to_branch("master")
     CommandLine.line_break
