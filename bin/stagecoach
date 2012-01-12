@@ -11,7 +11,7 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
-  if opts[:testing == false]
+  unless opts[:testing == true]
     # Checks that config params have been set and makes you set em if not.
     Config.setup if config["redmine_site"] == "none"
     Config.setup if config["redmine_api"]  == "none"
