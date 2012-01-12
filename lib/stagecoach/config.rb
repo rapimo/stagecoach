@@ -22,7 +22,7 @@ module Stagecoach
       puts "Stagecoach Initial Setup"
       CommandLine.line_break
       loop do 
-        puts "Enter your redmine/planio repository, eg. http://digitaleseiten.plan.io:"
+        puts "Enter your redmine/planio repository, eg. https://digitaleseiten.plan.io:"
         redmine_repo = STDIN.gets.chomp
         puts "Enter your API key for that repo:"
         redmine_api_key = STDIN.gets.chomp
