@@ -132,7 +132,8 @@ module Stagecoach
 
     # Make sure this is the correct git branch.
     loop do
-      puts "You are currently in local branch: #{Git.current_local_branch.red} \nIs this correct? ([Y]es or [N]o):"
+      branch = Git.current_local_branch
+      puts "You are currently in local branch: #{branch.red} \nIs this correct? ([Y]es or [N]o):"
       if STDIN.gets.chomp == "Y"
         break
       else
@@ -144,6 +145,7 @@ module Stagecoach
         branch = Git.branches[STDIN.gets.chomp.to_i]
         if branch =~ /\*/
           Git.change_to_branch(branch[1..-1])
+          branch = branch[1..-1]
         else
           Git.change_to_branch(branch)
         end
