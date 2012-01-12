@@ -12,8 +12,8 @@ module Stagecoach
   config_file = Config.open
 
   # Checks that config params have been set and makes you set em if not
-  Config.setup if config["redmine_site"] == "none" 
-  Config.setup if config["redmine_api"]  == "none" 
+  Config.setup if config["redmine_site"] == "none" && opts[:testing] == false
+  Config.setup if config["redmine_api"]  == "none" && opts[:testing] == false
 
   
   # Set up redmine_client config.
@@ -28,7 +28,7 @@ module Stagecoach
   Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.unpushed_commits? == "0"
 
   # For changing the Redmine Repo and API key
-  if opts[:setup]
+  if opts[:setup] && opts[:testing] == false
     Config.setup
   end
 

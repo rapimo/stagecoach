@@ -39,6 +39,7 @@ This automates the entire workflow for you as follows:
         opt :branch, "Enter your new branch name here", :type => :string
         opt :issue, "Enter your planio issue number here,  e.g. stagecoach -i 4115", :type  => :string
         opt :setup, "Use this the first time you run stagecoach to save your redmine repository and api key"
+        opt :testing, "Allows testing of Stagecoach without the need to enter any details"
       end
     end
   end
