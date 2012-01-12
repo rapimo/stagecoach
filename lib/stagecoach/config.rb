@@ -33,8 +33,8 @@ module Stagecoach
         
         CommandLine.line_break
         puts "Settings saved OK:"
-        puts "Repository:" + redmine_repo
-        puts "API Key:   " + redmine_api_key
+        puts "Repository: " + redmine_repo
+        puts "API Key:    " + redmine_api_key
         CommandLine.line_break
         puts "[Q]uit or [R]edo"
         if STDIN.gets.chomp == 'Q'
