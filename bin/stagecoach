@@ -11,15 +11,7 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
-
-  
-  # Set up redmine_client config.
-  RedmineClient::Base.configure do
-    self.site = config["redmine_site"]
-    self.user = config["redmine_api_key"]
-  end
-
-  if opts[:testing == false]
+  unless opts[:testing == true]
     # Checks that config params have been set and makes you set em if not.
     Config.setup if config["redmine_site"] == "none"
     Config.setup if config["redmine_api"]  == "none"
@@ -31,10 +23,15 @@ module Stagecoach
   end
 
   # For changing the Redmine Repo and API key
-  if opts[:setup] && opts[:testing] == false
+  if opts[:setup]
     Config.setup
   end
 
+  # Set up redmine_client config.
+  RedmineClient::Base.configure do
+    self.site = config["redmine_site"]
+    self.user = config["redmine_api_key"]
+  end
 
   # Saves the issue number for later.
   if opts[:issue]
