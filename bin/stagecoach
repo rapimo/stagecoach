@@ -136,10 +136,10 @@ module Stagecoach
       if STDIN.gets.chomp == "Y"
         break
       else
-        puts "Which local branch would you like to be in?"
+        puts "Which local branch would you like to be in? Enter a number:"
         Git.branches.each do |b|
           n = Git.branches.index(b)
-          puts "#{n}.  " + b
+          puts "[#{n}].  " + b
         end
         branch = Git.branches[STDIN.gets.chomp.to_i]
         if branch =~ /\*/
