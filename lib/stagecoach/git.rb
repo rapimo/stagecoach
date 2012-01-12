@@ -21,9 +21,24 @@ module Stagecoach
     end
 
     def self.change_to_branch(branch)
-      `git checkout #{branch}`
-    end
+      if self.branch_exist?(branch)
+        `git checkout #{branch}`
+      else
+        puts "Branch '#{branch}' does not exist. [C]reate or [Q]uit"
+        case STDIN.gets.chomp
+        when 'C'
+          self.new_branch(branch)
+        when 'Q'     
+          exit
+        end
+      end
 
+    end
+    
+    def self.branch_exist?(branch)
+      self.branches.find { |e| /#{branch}/ =~ e }
+    end
+      
     def self.new_issue(title, description)
       `ghi -o "#{title}" -m "#{description}"`
     end
