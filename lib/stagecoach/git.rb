@@ -32,9 +32,21 @@ module Stagecoach
           exit
         end
       end
-
     end
     
+    def self.push(branch)
+      puts `git push origin #{branch}`
+    end
+
+    
+    def self.checkout(branch) 
+      puts `git checkout #{branch}`
+    end
+
+    def self.pull
+      puts `git pull`
+    end
+
     def self.branch_exist?(branch)
       self.branches.find { |e| /#{branch}/ =~ e }
     end
