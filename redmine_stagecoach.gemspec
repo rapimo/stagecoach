@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "redmine_stagecoach"
-  s.version = "0.2.3"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Oli Barnett"]
@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/stagecoach/config.yaml",
     "lib/stagecoach/git.rb",
     "lib/stagecoach/redmine.rb",
+    "redmine_stagecoach.gemspec",
     "stagecoach.gemspec",
     "test/helper.rb",
     "test/test_stagecoach.rb"
@@ -52,6 +53,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<redmine_client>, [">= 0"])
       s.add_runtime_dependency(%q<ghi>, [">= 0"])
       s.add_runtime_dependency(%q<trollop>, [">= 0"])
+      s.add_runtime_dependency(%q<capistrano>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -60,6 +62,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<redmine_client>, [">= 0"])
       s.add_dependency(%q<ghi>, [">= 0"])
       s.add_dependency(%q<trollop>, [">= 0"])
+      s.add_dependency(%q<capistrano>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -69,6 +72,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<redmine_client>, [">= 0"])
     s.add_dependency(%q<ghi>, [">= 0"])
     s.add_dependency(%q<trollop>, [">= 0"])
+    s.add_dependency(%q<capistrano>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
