@@ -36,7 +36,7 @@ module Stagecoach
   end
 
 
-  # Everything except the deploy stage.
+  # Initial stage.
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
     if Git.changes.size > 1
@@ -74,11 +74,27 @@ module Stagecoach
 
     # Saves the branch-specific details for later.
     if opts[:github]
-      branch_config_hash = {:issue_type => "github", :issue_number => opts[:github]}
+      branch_config = {:issue_type => "github", :issue_number => opts[:github]}
     elsif opts[:planio]
-      branch_config_hash = {:issue_type => "planio", :issue_number => opts[:planio]}
+      issue_number = opts[:planio]
+      branch_config = {:issue_type => "planio", :issue_number => issue_number}
+
+      # Check that the planio issue is not already assigned
+      planio_issue = Redmine.issue(issue_number)
+      if planio.status.id ==! '1'
+        puts "Warning!".red
+        puts "This issue is in status '#{planio_issue.status.name}'"
+        puts "It is assigned to #{planio_issue.assigned_to.name}"
+        puts "Are you sure you want to continue? [Y]es or [Q]uit"
+        case STDIN.gets.chomp
+        when 'Y'
+        when 'Q'  
+          exit
+        end
+      end
+
     end
-    config[branch] = branch_config_hash
+    config[branch] = branch_config
     Config.save(config, config_file)
   end
 
