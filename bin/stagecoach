@@ -11,13 +11,14 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
-  unless opts[:testing_given]
-    # Checks that config params have been set and makes you set em if not.
+
+  unless opts[:testing_given] # Ignores these checks if -t flag is given
     Config.setup if config["redmine_site"] == "none"
     Config.setup if config["redmine_api"]  == "none"
 
     # Checks that command-line args are present and correct.
-    Trollop::die :issue, "number can only contain digits" if opts[:issue] && opts[:issue][/\D/]
+    Trollop::die :planio, "issue number can only contain digits" if opts[:planio] && opts[:planio][/\D/]
+    Trollop::die :github, "issue number can only contain digits" if opts[:github] && opts[:github][/\D/]
     Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
     Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.unpushed_commits? == "0" 
   end
@@ -33,11 +34,6 @@ module Stagecoach
     self.user = config["redmine_api_key"]
   end
 
-  # Saves the issue number for later.
-  if opts[:issue]
-    config["issue_number"] = opts[:issue] 
-    Config.save(config, config_file)
-  end
 
   # Everything except the deploy stage.
   unless opts[:deploy]
@@ -74,6 +70,16 @@ module Stagecoach
       Git.new_branch(branch)
     end
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
+
+    # Saves the branch details for later.
+    if opts[:github]
+      branch_config_hash = {:issue_type => "github", :issue_number => opts[:github]}
+    elsif opts[:planio]
+      branch_config_hash = {:issue_type => "planio", :issue_number => opts[:planio]}
+    end
+
+    config[branch] = branch_config_hash
+    Config.save(config, config_file)
   end
 
   # Deploy stage.
