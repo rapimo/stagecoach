@@ -28,7 +28,7 @@ module Stagecoach
   end
 
   # Set up redmine_client config.
-  RedmineClient::Base.configure do
+  RedmineApi::Client.configure do
     self.site = config["redmine_site"]
     self.user = config["redmine_api_key"]
   end
