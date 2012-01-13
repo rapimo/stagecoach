@@ -81,7 +81,7 @@ module Stagecoach
 
       # Check that the planio issue is not already assigned
       planio_issue = Redmine.issue(issue_number)
-      if planio.status.id ==! '1'
+      if planio.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
         puts "It is assigned to #{planio_issue.assigned_to.name}"
