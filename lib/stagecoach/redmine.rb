@@ -1,14 +1,19 @@
 require 'rubygems'
-require 'redmine_client'
+require 'active_resource'
+
+module RedmineApi
+  class Client < ActiveResource::Base; end
+  class Issue < RedmineApi::Client; end
+end
 
 module Stagecoach
   class Redmine
     def self.issue(issue_number)
-      return RedmineClient::Issue.find(issue_number)
+      return RedmineApi::Issue.find(issue_number)
     end
 
     def self.issue_url(issue)
-      RedmineClient::Base.site + "/issues/" + issue.id
+      RedmineApi::Client.site + "/issues/" + issue.id
     end
 
     # API testing - can be removed once the redmine API supports changing of

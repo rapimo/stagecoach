@@ -1,6 +1,5 @@
 source "http://rubygems.org"
 
-gem 'redmine_client'
 gem 'ghi'
 gem 'trollop'
 gem 'capistrano'

@@ -11,7 +11,7 @@ module Stagecoach
   config = Config.yaml_to_hash
   config_file = Config.open
 
-  unless opts[:testing == true]
+  unless opts[:testing_given]
     # Checks that config params have been set and makes you set em if not.
     Config.setup if config["redmine_site"] == "none"
     Config.setup if config["redmine_api"]  == "none"
@@ -27,8 +27,8 @@ module Stagecoach
     Config.setup
   end
 
-  # Set up redmine_client config.
-  RedmineClient::Base.configure do
+  # Set up redmine client config.
+  RedmineApi::Client.instance_eval do
     self.site = config["redmine_site"]
     self.user = config["redmine_api_key"]
   end
@@ -175,7 +175,7 @@ module Stagecoach
     Git.change_to_branch("master")
     CommandLine.line_break
     puts "Attempting to change Planio ticket status to 'Feedback' for you"
-    @issue.status.id = 4
+    @issue.status_id = 4
     @issue.save
     Redmine.test_issue(@issue)
   end
