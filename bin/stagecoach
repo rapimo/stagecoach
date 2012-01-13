@@ -70,7 +70,6 @@ module Stagecoach
     else
       Git.new_branch(branch)
     end
-    puts "Happy coding! Run stagecoach -d when you're ready to deploy."
 
     # Saves the branch-specific details for later.
     if opts[:github]
@@ -81,7 +80,7 @@ module Stagecoach
 
       # Check that the planio issue is not already assigned
       planio_issue = Redmine.issue(issue_number)
-      if planio.status.id != '1'
+      if planio_issue.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
         puts "It is assigned to #{planio_issue.assigned_to.name}"
@@ -92,10 +91,10 @@ module Stagecoach
           exit
         end
       end
-
     end
     config[branch] = branch_config
     Config.save(config, config_file)
+    puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
 
   # Deploy stage.
