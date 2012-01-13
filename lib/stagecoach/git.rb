@@ -17,6 +17,17 @@ module Stagecoach
         end
       end
 
+      def correct_branch?
+        branch = Git.current_local_branch
+        puts "You are currently in local branch: #{branch.red} \nAre all these details correct? ([Y]es or [Q]uit):"
+        case STDIN.gets.chomp
+        when "Y"
+        when "Q"
+          exit
+        else
+          puts "Please enter Y to continue or Q to quit."
+        end
+      end
       def new_branch(branch)
         `git checkout -b #{branch}`
       end
