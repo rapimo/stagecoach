@@ -139,22 +139,14 @@ module Stagecoach
       exit
     end
 
-    CommandLine.line_break
-    puts "Pushing your changes to branch '#{branch}'"
+    staging = 'staging'
+    master  = 'master'
+
     Git.push(branch)
-    CommandLine.line_break
-    puts "Merging into staging (after pull updates)"
-    Git.change_to_branch("staging")
-    puts `git pull origin staging`
-    puts `git merge #{branch}`
-    CommandLine.line_break
-    puts "Pushing to staging"
-    Git.push('staging')
-    CommandLine.line_break
-    puts "Deploying staging"
-    Capistrano.deploy('staging')
-    puts "Changing to master branch"
-    Git.change_to_branch("master")
+    Git.merge(staging, branch)
+    Git.push(staging)
+    Capistrano.deploy(staging)
+    Git.change_to_branch(master)
     CommandLine.line_break
     puts "Attempting to change Planio ticket status to 'Feedback' for you"
     @issue.status_id = 4

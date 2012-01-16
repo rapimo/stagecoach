@@ -33,6 +33,7 @@ module Stagecoach
       end
 
       def change_to_branch(branch)
+        puts "Changing to master branch"
         if branch_exist?(branch)
           `git checkout #{branch}`
         else
@@ -46,7 +47,17 @@ module Stagecoach
         end
       end
 
+      def merge(to_branch, from_branch)
+        CommandLine.line_break
+        puts "Merging into #{to_branch} (after pulling updates)"
+        Git.change_to_branch(to_branch)
+        puts `git pull origin #{to_branch}`
+        puts `git merge #{from_branch}`
+      end
+
       def push(branch)
+        CommandLine.line_break
+        puts "Pushing your changes to branch '#{branch}'"
         puts `git push origin #{branch}`
       end
 
