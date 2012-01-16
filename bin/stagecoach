@@ -101,7 +101,13 @@ module Stagecoach
 
   # Deploy stage.
   if opts[:deploy]
+    begin
     issue = {:number => config[Git.current_local_branch][:issue_number], :type => config[Git.current_local_branch][:issue_type]}
+    rescue NoMethodError
+      puts "Stagecoach doesn't have any information about this branch. Try running  without the -d flag first"
+      exit
+    end
+  
     if issue[:type] == 'planio'
       begin
         puts "Searching for planio issue number #{issue[:number]}..."
