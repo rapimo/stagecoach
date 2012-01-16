@@ -39,12 +39,26 @@ module Stagecoach
   # Initial stage.
   unless opts[:deploy]
     # Checks for uncommitted/unstashed changes and aborts if present.
-    if Git.changes.size > 1
+    if Git.changes != ''
       puts "You have uncommitted changes:".red
       puts Git.changes
       puts "Please commit or stash these changes before running Stagecoach. -h for help."
       exit
     end 
+
+    # If no issue argument is given
+    if opts[:github].nil? && opts[:planio].nil?
+      puts opts
+      puts "Are you working on a [P]lanio or a [G]ithub issue?"
+      case STDIN.gets.chomp
+      when 'P'
+        puts "Please enter your Planio issue number:"
+        opts[:planio] = gets.chomp
+      when 'G'
+        puts "Please enter your Github issue number:"
+        opts[:github] = gets.chomp
+      end
+    end
 
     # Change to master, pull changes, and create a new branch
     CommandLine.line_break  
@@ -71,6 +85,8 @@ module Stagecoach
     else
       Git.new_branch(branch)
     end
+
+
 
     # Saves the branch-specific details for later.
     # Treats github and redmine issues differently.
