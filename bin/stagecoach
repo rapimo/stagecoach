@@ -132,12 +132,13 @@ module Stagecoach
       rescue ActiveResource::ResourceNotFound => e
         puts e.message
       end
+
       # Create a Github issue referencing the planio issue.
+      Git.correct_branch?
       puts "Creating Git issue with subject: " + @issue.subject
       body = "Planio issue: #{Redmine.issue_url(@issue)} \n\n #{@issue.description}"
 
-      # Make sure we are in the correct branch, then create a Git issue.
-      Git.correct_branch?
+      # Create a Git issue.
       github_issue =  Git.new_issue(@issue.subject, body)
       github_issue_id = github_issue[/\d+/]
 
@@ -153,9 +154,6 @@ module Stagecoach
       @issue = Git.issue(issue[:number])
       puts "Issue found: #{@issue} \n" 
     end
-
-    # Make sure this is the correct git branch.
-    Git.correct_branch?
 
     # Get things rolling,  if everything else is OK.
     puts "Continue? Type 'push' to start script or anything else to cancel:"
