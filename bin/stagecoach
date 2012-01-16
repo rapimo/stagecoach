@@ -61,9 +61,10 @@ module Stagecoach
     # Make sure new local branch does not already exist.
     if Git.branch_exist?(branch)
       puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
-      if STDIN.gets.chomp == 'U'
+      case STDIN.gets.chomp
+      when 'U'
         Git.change_to_branch(branch)
-      else
+      when 'Q'
         puts "Exiting..."
         exit
       end
@@ -72,6 +73,7 @@ module Stagecoach
     end
 
     # Saves the branch-specific details for later.
+    # Treats github and redmine issues differently.
     if opts[:github]
       branch_config = {:issue_type => "github", :issue_number => opts[:github]}
     elsif opts[:planio]
@@ -139,14 +141,15 @@ module Stagecoach
       exit
     end
 
+    # Finally, push, merge and deploy!
     staging = 'staging'
     master  = 'master'
-
     Git.push(branch)
     Git.merge(staging, branch)
     Git.push(staging)
     Capistrano.deploy(staging)
     Git.change_to_branch(master)
+
     CommandLine.line_break
     puts "Attempting to change Planio ticket status to 'Feedback' for you"
     @issue.status_id = 4
