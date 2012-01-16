@@ -53,6 +53,7 @@ module Stagecoach
         Git.change_to_branch(to_branch)
         puts `git pull origin #{to_branch}`
         puts `git merge #{from_branch}`
+        raise 'merge failed' if $?.exitstatus != 0
       end
 
       def push(branch)
