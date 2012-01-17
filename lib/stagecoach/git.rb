@@ -33,7 +33,7 @@ module Stagecoach
       end
 
       def change_to_branch(branch)
-        puts "Changing to master branch"
+        puts "Changing to branch '#{branch}'"
         if branch_exist?(branch)
           `git checkout #{branch}`
         else
