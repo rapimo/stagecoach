@@ -47,6 +47,12 @@ module Stagecoach
         end
       end
 
+      def diff_from_master(branch)
+        diff = `git diff master #{branch}`
+        return diff
+      end
+
+
       def merge(to_branch, from_branch)
         CommandLine.line_break
         puts "Merging into #{to_branch} (after pulling updates)"
