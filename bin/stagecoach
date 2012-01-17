@@ -85,7 +85,8 @@ module Stagecoach
         puts "Exiting..."
         CommandLine.line_break
         puts "The following files in branch '#{branch}' differ from their master branch versions:"
-        puts Git.diff_from_master(master, branch)
+        puts Git.diff(master, branch)
+        exit
       end
       case STDIN.gets.chomp
       when 'U'
