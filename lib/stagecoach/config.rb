@@ -34,12 +34,8 @@ module Stagecoach
           puts "Repository: " + redmine_repo
           puts "API Key:    " + redmine_api_key
           CommandLine.line_break
-          puts "[Q]uit or [R]edo"
-          if STDIN.gets.chomp == 'Q'
-            exit
-          else
-            redo
-          end
+          puts "Exiting..."
+          exit
         end 
       end 
     end
