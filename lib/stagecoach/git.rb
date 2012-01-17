@@ -9,7 +9,7 @@ module Stagecoach
         `git diff-files --name-status -r --ignore-submodules`
       end
 
-      def current_local_branch
+      def current_branch
         branches.each do |b| 
           if b =~ /\*/
             return b[1..-1].strip
@@ -18,8 +18,8 @@ module Stagecoach
       end
 
       def correct_branch?
-        branch = Git.current_local_branch
-        puts "You are currently in local branch: #{branch.red} \nAre all these details correct? ([Y]es or [Q]uit):"
+        CommandLine.line_break
+        puts "You are currently in local branch: #{Git.current_branch.red} \nAre all these details correct? ([Y]es or [Q]uit):"
         case STDIN.gets.chomp
         when "Y"
         when "Q"
@@ -30,10 +30,12 @@ module Stagecoach
       end
 
       def new_branch(branch)
+        CommandLine.line_break
         `git checkout -b #{branch}`
       end
 
       def change_to_branch(branch)
+        CommandLine.line_break
         puts "Changing to branch '#{branch}'"
         if branch_exist?(branch)
           `git checkout #{branch}`
