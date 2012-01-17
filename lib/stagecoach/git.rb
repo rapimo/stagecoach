@@ -28,6 +28,7 @@ module Stagecoach
           puts "Please enter Y to continue or Q to quit."
         end
       end
+
       def new_branch(branch)
         `git checkout -b #{branch}`
       end
@@ -47,8 +48,8 @@ module Stagecoach
         end
       end
 
-      def diff_from_master(branch)
-        diff = `git diff master #{branch}`
+      def diff(branch1, branch2)
+        diff = `git diff --name-status #{branch1}..#{branch2}`
         return diff
       end
 
