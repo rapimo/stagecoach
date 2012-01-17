@@ -74,14 +74,24 @@ module Stagecoach
 
     # Make sure new local branch does not already exist.
     if Git.branch_exist?(branch)
-      puts "There is already a local branch called #{branch}. [Q]uit or [U]se this branch"
+      puts "There is already a local branch called #{branch}."
+      if Git.diff_from_master(branch) == ""
+        puts "Branch is up to date with master.  [U]se or [Q]uit"
+      else 
+        puts "Branch is not up to date with master. Please use a different branch or update this one."
+        puts "Hit [enter] to quit stagecoach and display the differences:"
+      end
       case STDIN.gets.chomp
       when 'U'
         Git.change_to_branch(branch)
       when 'Q'
+        exit
+      when ''
+        puts Git.diff_from_master(branch)
         puts "Exiting..."
         exit
       end
+      
     else
       Git.new_branch(branch)
     end
