@@ -81,11 +81,12 @@ module Stagecoach
       if Git.diff(master, branch) == ""
         puts "Branch is up to date with master.  [U]se or [Q]uit"
       else 
-        puts "Branch is not up to date with master. Please use a different branch or update this one."
+        puts "Branch is not up to date with master. Please use a different branch or update this one.".red
         puts "Exiting..."
         CommandLine.line_break
         puts "The following files in branch '#{branch}' differ from their master branch versions:"
         puts Git.diff(master, branch)
+        CommandLine.line_break
         exit
       end
       case STDIN.gets.chomp
