@@ -97,7 +97,7 @@ module Stagecoach
       end
 
       def view_issue(github_issue)
-        `ghi -u#{github_issue}`
+        open `ghi -u#{github_issue}`
       end
 
       def issue(id)

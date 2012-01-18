@@ -7,7 +7,6 @@ module Stagecoach
   master  = 'master'
 
   # Command line options courtesy of the Trollop gem.
-  # lib/stagecoach/command_line.rb 
   opts = CommandLine.trollop
 
   # Set up configuration variables.
@@ -38,20 +37,22 @@ module Stagecoach
     self.user = config["redmine_api_key"]
   end
 
+  # Checks for uncommitted/unstashed changes and aborts if present.
+  if Git.changes != ''
+    puts "You have uncommitted changes:".red
+    puts Git.changes
+    puts "Please commit or stash these changes before running Stagecoach. -h for help."
+    puts "Exiting..."
+    exit
+  end 
 
-  # Initial stage.
+
+  # Initial stage - set up branch and git issue.
+
   unless opts[:deploy]
-    # Checks for uncommitted/unstashed changes and aborts if present.
-    if Git.changes != ''
-      puts "You have uncommitted changes:".red
-      puts Git.changes
-      puts "Please commit or stash these changes before running Stagecoach. -h for help."
-      exit
-    end 
 
-    # If no issue argument is given
+    # If no issue argument has been given.
     if opts[:github].nil? && opts[:planio].nil?
-      puts opts
       puts "Are you working on a [P]lanio or a [G]ithub issue?"
       case STDIN.gets.chomp
       when 'P'
@@ -63,59 +64,15 @@ module Stagecoach
       end
     end
 
-    # Change to master, pull changes, and create a new branch
-    CommandLine.line_break  
-    Git.checkout(master)
-    puts "Pulling changes:"
-    Git.pull
-    if opts[:branch]
-      branch = opts[:branch]
-    else  
-      puts "Please enter a new git branch name for your changes (branch will be created):"
-      branch = STDIN.gets.chomp
-    end
-
-    # Make sure new local branch does not already exist.
-    if Git.branch_exist?(branch)
-      puts "There is already a local branch called #{branch}."
-      if Git.diff(master, branch) == ""
-        puts "Branch is up to date with master.  [U]se or [Q]uit"
-      else 
-        puts "Branch is not up to date with master. Please use a different branch or update this one.".red
-        puts "Exiting..."
-        CommandLine.line_break
-        puts "The following files in branch '#{branch}' differ from their master branch versions:"
-        puts Git.diff(master, branch)
-        CommandLine.line_break
-        exit
-      end
-      case STDIN.gets.chomp
-      when 'U'
-        Git.change_to_branch(branch)
-      when 'Q'
-        exit
-      end
-    else
-      Git.new_branch(branch)
-    end
-
-
-
-    # Saves the branch-specific details for later.
-    # Treats github and redmine issues differently.
-    if opts[:github]
-      branch_config = {:issue_type => "github", :issue_number => opts[:github]}
-    elsif opts[:planio]
-      issue_number = opts[:planio]
-      branch_config = {:issue_type => "planio", :issue_number => issue_number}
-
-      # Check that the planio issue is not already assigned
-      planio_issue = Redmine.issue(issue_number)
+    # Check that the planio issue is not already assigned.
+    if opts[:planio]
+      planio_issue_number = opts[:planio]
+      planio_issue = Redmine.issue(planio_issue_number)
       if planio_issue.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
         puts "It is assigned to #{planio_issue.assigned_to.name}"
-        puts "Are you sure you want to continue? [Y]es or [Q]uit"
+        puts "Continue? [Y]es or [Q]uit"
         case STDIN.gets.chomp
         when 'Y'
         when 'Q'  
@@ -124,55 +81,105 @@ module Stagecoach
       end
     end
 
+    # TODO: Check that the github issue is not already assigned.
 
-    if issue[:type] == 'planio'
+    # Hello, world!
+    CommandLine.line_break
+    puts "Stagecoach: initial stage"
+
+    # Change to master, pull changes, and create a new branch.
+    CommandLine.line_break  
+    puts "Switching to master branch"
+    Git.checkout(master)
+    puts "Pulling changes:"
+    Git.pull
+    if opts[:branch]
+      new_branch = opts[:branch]
+    else  
+      puts "Please enter a new git branch name for your changes (branch will be created):"
+      new_branch = STDIN.gets.chomp
+    end
+
+    # Make sure new local branch does not already exist.
+    if Git.branch_exist?(new_branch)
+      puts "There is already a local branch called #{new_branch}."
+      if Git.diff(master, new_branch) == ""
+        puts "#{new_branch} is up to date with master.  [U]se or [Q]uit"
+      else 
+        puts "#{new_branch} is not up to date with master. Please use a different branch or update this one.".red
+        puts "Exiting..."
+        CommandLine.line_break
+        puts "The following files in branch '#{new_branch}' differ from their master branch versions:"
+        puts Git.diff(master, new_branch)
+        CommandLine.line_break
+        exit
+      end
+      case STDIN.gets.chomp
+      when 'U'
+        Git.change_to_branch(new_branch)
+      when 'Q'
+        exit
+      end
+    else
+      Git.new_branch(new_branch)
+    end
+
+    # Issue handling.
+    if opts[:github]
+      config[Git.current_branch] = {:github_issue => opts[:github]}
+      #TODO check that github issue is not assigned to somebody already
+    elsif opts[:planio]
+      config[Git.current_branch] = {:planio_issue => planio_issue_number}
+    end
+
+    issue = config[Git.current_branch]
+
+    # Set up the related issue for this branch.
+    if planio_issue = issue[:planio_issue]
       begin
-        puts "Searching for planio issue number #{issue[:number]}..."
-        @issue = Redmine.issue(issue[:number])
-        puts "Issue found: #{@issue.subject} \n" 
+        puts "Searching for issue number #{planio_issue}..."
+        redmine_issue = Redmine.issue(planio_issue)
       rescue ActiveResource::ResourceNotFound => e
         puts e.message
+        exit
       end
+        puts "Issue found: #{redmine_issue.subject}\n" 
 
       # Create a Github issue referencing the planio issue.
-      Git.correct_branch?
-      puts "Creating Git issue with subject: " + @issue.subject
-      body = "Planio issue: #{Redmine.issue_url(@issue)} \n\n #{@issue.description}"
+      puts "Creating Git issue with subject: " + redmine_issue.subject
+      body = "Planio issue: #{Redmine.issue_url(redmine_issue)} \n\n #{redmine_issue.description}"
 
       # Create a Git issue.
-      github_issue =  Git.new_issue(@issue.subject, body)
+      github_issue =  Git.new_issue(redmine_issue.subject, body)
       github_issue_id = github_issue[/\d+/]
 
-      puts "Would you like to edit the issue on Github? [Y]es or [N]o"
+      # Save it so we can reference it in commits using the magic of git hooks!
+      config[Git.current_branch] = {:github_issue => github_issue_id, :planio_issue => planio_issue}
+
+      puts "Would you like to edit the issue on Github? [Y]es or anything else to continue"
+      
       if STDIN.gets.chomp == 'Y'
-        `open #{Git.view_issue(github_issue_id)}` 
+        Git.view_issue(github_issue_id) 
         puts "Hit any key once you are done editing to continue"
         sleep unless STDIN.gets.chomp
       else
       end
-    elsif issue[:type] == 'github'
-      puts "Searching for github issue number #{issue[:number]}..."
-      @issue = Git.issue(issue[:number])
-      puts "Issue found: #{@issue} \n" 
     end
 
+    # Github issues are easier.
+    if issue[:github]
+      puts "Searching for github issue number #{issue[:number]}..."
+      github_issue = Git.issue(issue[:number])
+      puts "Issue found: #{github_issue} \n" 
+    end
 
-
-
-    config[branch] = branch_config
+    # Saves the branch-specific details for later.
     Config.save(config, config_file)
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
 
   # Deploy stage.
-  branch = Git.current_branch
   if opts[:deploy]
-    begin
-      issue = {:number => config[branch][:issue_number], :type => config[branch][:issue_type]}
-    rescue NoMethodError
-      puts "Stagecoach doesn't have any information about this branch. Try running  without the -d flag first"
-      exit
-    end
 
 
     # Get things rolling,  if everything else is OK.
