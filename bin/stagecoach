@@ -123,20 +123,7 @@ module Stagecoach
         end
       end
     end
-    config[branch] = branch_config
-    Config.save(config, config_file)
-    puts "Happy coding! Run stagecoach -d when you're ready to deploy."
-  end
 
-  # Deploy stage.
-  branch = Git.current_branch
-  if opts[:deploy]
-    begin
-      issue = {:number => config[branch][:issue_number], :type => config[branch][:issue_type]}
-    rescue NoMethodError
-      puts "Stagecoach doesn't have any information about this branch. Try running  without the -d flag first"
-      exit
-    end
 
     if issue[:type] == 'planio'
       begin
@@ -168,6 +155,25 @@ module Stagecoach
       @issue = Git.issue(issue[:number])
       puts "Issue found: #{@issue} \n" 
     end
+
+
+
+
+    config[branch] = branch_config
+    Config.save(config, config_file)
+    puts "Happy coding! Run stagecoach -d when you're ready to deploy."
+  end
+
+  # Deploy stage.
+  branch = Git.current_branch
+  if opts[:deploy]
+    begin
+      issue = {:number => config[branch][:issue_number], :type => config[branch][:issue_type]}
+    rescue NoMethodError
+      puts "Stagecoach doesn't have any information about this branch. Try running  without the -d flag first"
+      exit
+    end
+
 
     # Get things rolling,  if everything else is OK.
     puts "Continue? Type 'push' to start script or anything else to cancel:"
