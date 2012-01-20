@@ -88,11 +88,12 @@ module Stagecoach
         `ghi -o "#{title}" -m "#{description}"`
       end
 
-      def unpushed_commits?
-        if `git log --branches --not --remotes`.length > 1
-          return "1"
+      def branch_has_commits?(branch)
+        log = `git log --branches --not --remotes --simplify-by-decoration --decorate --oneline`
+        if log.include? branch
+          return true
         else
-          return "0"
+          return false
         end
       end
 

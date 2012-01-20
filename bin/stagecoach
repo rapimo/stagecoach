@@ -30,8 +30,8 @@ module Stagecoach
       puts "You can't enter a github issue at the same time as a planio issue at the moment.  Make up your mind!\nExiting..."
       exit
     end
-      
   end
+
 
   # For changing the Redmine Repo and API key
   if opts[:setup]
@@ -90,7 +90,6 @@ module Stagecoach
 
     # TODO: Check that the github issue is not already assigned.
 
-    # Hello, world!
     CommandLine.line_break
     puts "Stagecoach: initial stage"
 
@@ -187,6 +186,13 @@ module Stagecoach
   if opts[:deploy]
     # Finally, push, merge and deploy!
     branch = Git.current_branch
+
+    # There's no point in deploying without any commits...
+    unless Git.branch_has_commits?(branch)
+      puts "You don't have any uncommitted changes on branch #{branch}.  Please make some commits before running stagecoach!\nExiting..."
+      exit
+    end
+
     Git.push(branch)
     Git.merge(staging, branch)
     Git.push(staging)
