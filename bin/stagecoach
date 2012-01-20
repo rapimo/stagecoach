@@ -160,8 +160,6 @@ module Stagecoach
       
       if STDIN.gets.chomp == 'Y'
         Git.view_issue(github_issue_id) 
-        puts "Hit any key once you are done editing to continue"
-        sleep unless STDIN.gets.chomp
       else
       end
     end

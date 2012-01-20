@@ -1,5 +1,3 @@
-require 'open-uri'
-
 module Stagecoach
   class Git
     class << self
@@ -99,7 +97,8 @@ module Stagecoach
       end
 
       def view_issue(github_issue)
-        open `ghi -u#{github_issue}`
+        issue_url = `ghi -u#{github_issue}`
+        `open #{issue_url}`
       end
 
       def issue(id)
