@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "redmine_stagecoach"
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Oli Barnett"]
-  s.date = "2012-01-12"
+  s.date = "2012-01-20"
   s.description = "Git/capistrano workflow automation script with Redmine & Github issue integration"
   s.email = "o.barnett@digitaleseiten.de"
   s.executables = ["stagecoach"]
@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
     "VERSION",
     "bin/stagecoach",
     "lib/.DS_Store",
-    "lib/config.yaml",
     "lib/stagecoach.rb",
     "lib/stagecoach/capistrano.rb",
     "lib/stagecoach/command_line.rb",
@@ -37,7 +36,6 @@ Gem::Specification.new do |s|
     "lib/stagecoach/git.rb",
     "lib/stagecoach/redmine.rb",
     "redmine_stagecoach.gemspec",
-    "stagecoach.gemspec",
     "test/helper.rb",
     "test/test_stagecoach.rb"
   ]
@@ -51,7 +49,6 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<redmine_client>, [">= 0"])
       s.add_runtime_dependency(%q<ghi>, [">= 0"])
       s.add_runtime_dependency(%q<trollop>, [">= 0"])
       s.add_runtime_dependency(%q<capistrano>, [">= 0"])
@@ -60,7 +57,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
-      s.add_dependency(%q<redmine_client>, [">= 0"])
       s.add_dependency(%q<ghi>, [">= 0"])
       s.add_dependency(%q<trollop>, [">= 0"])
       s.add_dependency(%q<capistrano>, [">= 0"])
@@ -70,7 +66,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
-    s.add_dependency(%q<redmine_client>, [">= 0"])
     s.add_dependency(%q<ghi>, [">= 0"])
     s.add_dependency(%q<trollop>, [">= 0"])
     s.add_dependency(%q<capistrano>, [">= 0"])
