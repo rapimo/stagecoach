@@ -30,7 +30,7 @@ module Stagecoach
         puts issue_url
       end
         print "Open in browser? [Y]es or anything else to exit:  "
-        open issue_url.to_s if gets.chomp == "Y"
+        `open #{issue_url.to_s}` if gets.chomp == "Y"
         puts "Staging completed!  Exiting..."
     end
   end
