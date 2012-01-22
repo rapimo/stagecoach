@@ -23,7 +23,6 @@ module Stagecoach
     Trollop::die :planio, "issue number can only contain digits" if opts[:planio] && opts[:planio][/\D/]
     Trollop::die :github, "issue number can only contain digits" if opts[:github] && opts[:github][/\D/]
     Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
-    Trollop::die :deploy, "needs some commits! Do some coding before running deploy" if opts [:deploy] && Git.unpushed_commits? == "0" 
 
     # You can't give a planio and a github issue number (for the moment)
     if opts[:github] && opts[:planio]
@@ -179,6 +178,7 @@ module Stagecoach
 
     # Github issues are easier.
     if issue[:github]
+      #TODO what happens if no github issue is found?
       puts "Searching for github issue number #{issue[:number]}..."
       github_issue = Git.issue(issue[:number])
       puts "Issue found: #{github_issue} \n" 
