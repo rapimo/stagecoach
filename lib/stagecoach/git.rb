@@ -19,7 +19,7 @@ module Stagecoach
 
       def correct_branch?
         CommandLine.line_break
-        puts "You are currently in local branch: #{Git.current_branch.red} \nAre all these details correct? ([Y]es or [Q]uit):"
+        print "You are currently in local branch: #{Git.current_branch.red} \nAre these details correct? ([Y]es or [Q]uit):  "
         case STDIN.gets.chomp
         when "Y"
         when "Q"
@@ -40,7 +40,7 @@ module Stagecoach
         if branch_exist?(branch)
           `git checkout #{branch}`
         else
-          puts "Branch '#{branch}' does not exist. [C]reate or [Q]uit"
+          print "Branch '#{branch}' does not exist. [C]reate or [Q]uit:  "
           case STDIN.gets.chomp
           when 'C'
             new_branch(branch)

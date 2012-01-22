@@ -60,13 +60,13 @@ module Stagecoach
 
     # If no issue argument has been given.
     if opts[:github].nil? && opts[:planio].nil?
-      puts "Are you working on a [P]lanio or a [G]ithub issue?"
+      print "Are you working on a [P]lanio or a [G]ithub issue:  "
       case STDIN.gets.chomp
       when 'P'
-        puts "Please enter your Planio issue number:"
+        print "Please enter your Planio issue number:  "
         opts[:planio] = gets.chomp
       when 'G'
-        puts "Please enter your Github issue number:"
+        print "Please enter your Github issue number:  "
         opts[:github] = gets.chomp
       end
     end
@@ -79,7 +79,7 @@ module Stagecoach
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
         puts "It is assigned to #{planio_issue.assigned_to.name}"
-        puts "Continue? [Y]es or [Q]uit"
+        print "Continue? [Y]es or [Q]uit:  "
         case STDIN.gets.chomp
         when 'Y'
         when 'Q'  
@@ -102,7 +102,7 @@ module Stagecoach
     if opts[:branch]
       new_branch = opts[:branch]
     else  
-      puts "Please enter a new git branch name for your changes (branch will be created):"
+      print "Please enter a new git branch name for your changes (branch will be created):  "
       new_branch = STDIN.gets.chomp
     end
 
@@ -117,7 +117,7 @@ module Stagecoach
     if Git.branch_exist?(new_branch)
       puts "There is already a local branch called #{new_branch}."
       if Git.diff(master, new_branch) == ""
-        puts "#{new_branch} is up to date with master.  [U]se or [Q]uit"
+        print "#{new_branch} is up to date with master.  [U]se or [Q]uit:  "
       else 
         puts "#{new_branch} is not up to date with master. Please use a different branch or update this one.".red
         puts "Exiting..."
@@ -169,7 +169,7 @@ module Stagecoach
       # Save it so we can reference it in commits using the magic of git hooks!
       config[Git.current_branch] = {:github_issue => github_issue_id, :planio_issue => planio_issue}
 
-      puts "Would you like to edit the issue on Github? [Y]es or anything else to continue"
+      print "Would you like to edit the issue on Github? [Y]es or anything else to continue:  "
       
       if STDIN.gets.chomp == 'Y'
         Git.view_issue(github_issue_id) 

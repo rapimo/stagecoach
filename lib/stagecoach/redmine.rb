@@ -23,15 +23,15 @@ module Stagecoach
       issue_url = Redmine.issue_url(issue)
       issue_hash = issue.status.attributes
       if issue_hash['name'] == 'Feedback'
-        puts 'Feedback changed successfully!'
+        puts 'Issue status changed successfully!'
         puts "View issue: #{issue_url}"
       else
-        puts "Sorry, the Redmine API doesn't currently support changing of issue status via API.  Please change it manually:"
+        puts "Sorry, couldn't change the issue status for some reason.  Please change it manually:"
         puts issue_url
-        puts "Open in browser? [Y]es/[N]o"
+      end
+        print "Open in browser? [Y]es or anything else to exit:  "
         open issue_url.to_s if gets.chomp == "Y"
         puts "Staging completed!  Exiting..."
-      end
     end
   end
 end

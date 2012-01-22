@@ -20,14 +20,12 @@ module Stagecoach
         puts "Stagecoach Initial Setup"
         CommandLine.line_break
         loop do 
-          puts "Enter your redmine/planio repository, eg. https://digitaleseiten.plan.io:"
+          print "Enter your redmine/planio repository, eg. https://digitaleseiten.plan.io:  "
           redmine_repo = STDIN.gets.chomp
-          puts "Enter your API key for that repo:"
+          print "Enter your API key for that repo:  "
           redmine_api_key = STDIN.gets.chomp
 
-          config_hash = {"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key}
-
-          Config.save(config_hash)
+          Config.save({"redmine_site" => redmine_repo, "redmine_api_key"  => redmine_api_key})
 
           CommandLine.line_break
           puts "Settings saved OK:"
