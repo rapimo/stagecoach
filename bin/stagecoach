@@ -220,7 +220,7 @@ module Stagecoach
       issue = Redmine.issue(planio_issue_number)
       issue.status_id = 4
       issue.save
-      Redmine.test_issue(issue)
+      Redmine.view_issue(issue)
     end
   end
 end
