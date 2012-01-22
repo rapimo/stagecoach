@@ -106,6 +106,13 @@ module Stagecoach
       new_branch = STDIN.gets.chomp
     end
 
+    # Check that the new branch isn't master, because that would be silly
+    case new_branch
+    when 'master', 'Master' 
+      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
+      exit
+    end
+
     # Make sure new local branch does not already exist.
     if Git.branch_exist?(new_branch)
       puts "There is already a local branch called #{new_branch}."
@@ -186,8 +193,15 @@ module Stagecoach
   if opts[:deploy]
     # Finally, push, merge and deploy!
     branch = Git.current_branch
+    
+    # Stop anybody deploying master to staging...
+    case branch
+    when 'master', 'Master' 
+      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
+      exit
+    end
 
-    # There's no point in deploying without any commits...
+    # There's no point in deploying without any commits
     unless Git.branch_has_commits?(branch)
       puts "You don't have any uncommitted changes on branch #{branch}.  Please make some commits before running stagecoach!\nExiting..."
       exit
