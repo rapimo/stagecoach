@@ -5,6 +5,12 @@ module Stagecoach
         `git branch`.split("\n")
       end
 
+      def global_ignore(filename)
+        File.open(Dir.home + '/.gitignore', 'a') do |gitignore|
+          gitignore.puts(filename)
+        end
+      end
+
       def changes
         `git diff-files --name-status -r --ignore-submodules`
       end
