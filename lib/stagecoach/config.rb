@@ -4,7 +4,7 @@ module Stagecoach
   class Config
     class << self
       def open
-        File.open((File.dirname(__FILE__) + '/config.yaml'), 'r+')
+        File.open((File.dirname(`pwd`.chomp) + '/.stagecoach'), 'r+')
       end
 
       def yaml_to_hash 
