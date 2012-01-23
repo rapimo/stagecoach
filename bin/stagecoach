@@ -92,6 +92,10 @@ module Stagecoach
           exit
         end
       end
+
+      # Set the planio issue status to 'In Bearbeitung'
+      planio_issue.status.id = 2
+      planio_issue.save
     end
 
     # TODO: Check that the github issue is not already assigned.
