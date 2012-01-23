@@ -3,8 +3,25 @@ require 'yaml'
 module Stagecoach
   class Config
     class << self
+
+    CONFIG_FILE = `pwd`.chomp + '/.stagecoach'
+
+      def new
+        print <<WARNING
+You are running stagecoach from #{`pwd`.chomp}. Is this correct? 
+#{"Note:".red} stagecoach branch information will be saved here (and .gitignored) [C]ontinue or [Q]uit:
+WARNING
+        case STDIN.gets.chomp
+        when 'C'
+          File.open(CONFIG_FILE, 'w') { |f| f.write("---\nredmine_site: none\nredmine_api_key: none")}
+        when 'Q'
+          puts "Exiting..."
+          exit
+        end
+      end
+
       def open
-        File.open((File.dirname(`pwd`.chomp) + '/.stagecoach'), 'r+')
+        File.open(CONFIG_FILE, 'a+')
       end
 
       def yaml_to_hash 
@@ -17,7 +34,8 @@ module Stagecoach
 
       def setup
         # Ignore the stagecoach config file
-        Git.global_ignore('.stagecoach')  
+        Git.global_ignore('.stagecoach')
+        Config.new
 
         # Get the user details
         CommandLine.line_break

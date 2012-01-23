@@ -9,9 +9,13 @@ module Stagecoach
   # Command line options courtesy of the Trollop gem.
   opts = CommandLine.trollop
 
+  # Initial setup with -s flag
+  if opts[:setup]
+    Config.setup
+  end
+
   # Set up configuration variables.
   config = Config.yaml_to_hash
-  config_file = Config.open
 
   # Checks validity of argument variables.
   # Ignore these checks with -t flag.
@@ -32,10 +36,6 @@ module Stagecoach
   end
 
 
-  # For changing the Redmine Repo and API key
-  if opts[:setup]
-    Config.setup
-  end
 
   # Set up redmine client config.
   RedmineApi::Client.instance_eval do
@@ -185,7 +185,7 @@ module Stagecoach
     end
 
     # Saves the branch-specific details for later.
-    Config.save(config, config_file)
+    Config.save(config)
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
 
