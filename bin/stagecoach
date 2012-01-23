@@ -84,7 +84,10 @@ module Stagecoach
       if planio_issue.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
+        begin 
         puts "It is assigned to #{planio_issue.assigned_to.name}"
+        rescue
+        end
         print "Continue? [Y]es or [Q]uit:  "
         case STDIN.gets.chomp
         when 'Y'
@@ -199,6 +202,8 @@ module Stagecoach
     Config.save(config)
     puts "Happy coding! Run stagecoach -d when you're ready to deploy."
   end
+
+  # ------------------------------------------------------------------
 
   # Deploy stage.
   if opts[:deploy]
