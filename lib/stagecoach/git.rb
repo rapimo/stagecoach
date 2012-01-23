@@ -5,6 +5,15 @@ module Stagecoach
         `git branch`.split("\n")
       end
 
+      def global_ignore(filename)
+        gitignore = File.open(Dir.home + '/.gitignore', 'a+')
+
+        # Check if filename is ignored already and ignores it if not
+          unless File.read(gitignore) =~ /\.stagecoach/
+            gitignore.puts(filename)
+          end
+      end
+
       def changes
         `git diff-files --name-status -r --ignore-submodules`
       end

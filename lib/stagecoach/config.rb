@@ -3,8 +3,25 @@ require 'yaml'
 module Stagecoach
   class Config
     class << self
+
+    CONFIG_FILE = `pwd`.chomp + '/.stagecoach'
+
+      def new
+        print <<WARNING
+You are running stagecoach from #{`pwd`.chomp}. Is this correct? 
+#{"Note:".red} stagecoach branch information will be saved here (and .gitignored) [C]ontinue or [Q]uit:
+WARNING
+        case STDIN.gets.chomp
+        when 'C'
+          File.open(CONFIG_FILE, 'w') { |f| f.write("---\nredmine_site: none\nredmine_api_key: none")}
+        when 'Q'
+          puts "Exiting..."
+          exit
+        end
+      end
+
       def open
-        File.open((File.dirname(__FILE__) + '/config.yaml'), 'r+')
+        File.open(CONFIG_FILE, 'a+')
       end
 
       def yaml_to_hash 
@@ -16,12 +33,16 @@ module Stagecoach
       end
 
       def setup
+        # Ignore the stagecoach config file
+        Git.global_ignore('.stagecoach')
+        Config.new
+
+        # Get the user details
         CommandLine.line_break
         puts "Stagecoach Initial Setup"
         CommandLine.line_break
-        #TODO Some verification of the input at this stage, for example test the
-        #connection and have the user re-enter the details if no connection can
-        #be made
+        # TODO Some verification of the input at this stage, for example test the
+        # connection and have the user re-enter the details if necessary 
         loop do 
           print "Enter your redmine/planio repository, eg. https://digitaleseiten.plan.io:  "
           redmine_repo = STDIN.gets.chomp
