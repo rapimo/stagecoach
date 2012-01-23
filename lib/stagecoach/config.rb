@@ -16,12 +16,15 @@ module Stagecoach
       end
 
       def setup
+        # Ignore the stagecoach config file
+        Git.global_ignore('.stagecoach')  
+
+        # Get the user details
         CommandLine.line_break
         puts "Stagecoach Initial Setup"
         CommandLine.line_break
-        #TODO Some verification of the input at this stage, for example test the
-        #connection and have the user re-enter the details if no connection can
-        #be made
+        # TODO Some verification of the input at this stage, for example test the
+        # connection and have the user re-enter the details if necessary 
         loop do 
           print "Enter your redmine/planio repository, eg. https://digitaleseiten.plan.io:  "
           redmine_repo = STDIN.gets.chomp

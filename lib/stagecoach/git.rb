@@ -6,8 +6,14 @@ module Stagecoach
       end
 
       def global_ignore(filename)
-        File.open(Dir.home + '/.gitignore', 'a') do |gitignore|
-          gitignore.puts(filename)
+        gitignore = File.open(Dir.home + '/.gitignore', 'a')
+
+        # Check if filename is ignore already and ignores it if not
+        gitignore.each do |line|
+          line.chomp!
+          if line.include? filename
+            gitignore.puts(filename)
+          end
         end
       end
 
