@@ -16,9 +16,7 @@ module Stagecoach
       RedmineApi::Client.site + "/issues/" + issue.id
     end
 
-    # API testing - can be removed once the redmine API supports changing of
-    # issue status, currently this is broken.
-    # More information at http://www.redmine.org/boards/2/topics/25920
+    # Open the issue in a browser.
     def self.view_issue(issue)
       issue_url = Redmine.issue_url(issue)
         print "Open planio issue in browser? [Y]es or anything else to exit:  "
