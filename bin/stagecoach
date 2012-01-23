@@ -2,6 +2,8 @@
 # encoding: utf-8
 require File.dirname(__FILE__) + '/../lib/stagecoach.rb'
 
+CONFIG_FILE = `pwd`.chomp + '/.stagecoach'
+
 module Stagecoach
   staging = 'staging'
   master  = 'master'
@@ -9,12 +11,17 @@ module Stagecoach
   # Command line options courtesy of the Trollop gem.
   opts = CommandLine.trollop
 
-  # Initial setup with -s flag
+  # Initial setup with -s flag.
   if opts[:setup]
     Config.setup
   end
 
-  # Set up configuration variables.
+  # Initial setup without -s flag.
+  unless File.exist?(CONFIG_FILE)
+    Config.setup
+  end
+
+  # Load config file to a hash.
   config = Config.yaml_to_hash
 
   # Checks validity of argument variables.

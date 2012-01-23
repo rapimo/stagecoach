@@ -3,9 +3,6 @@ require 'yaml'
 module Stagecoach
   class Config
     class << self
-
-    CONFIG_FILE = `pwd`.chomp + '/.stagecoach'
-
       def new
         print <<WARNING
 You are running stagecoach from #{`pwd`.chomp}. Is this correct? 
@@ -33,14 +30,17 @@ WARNING
       end
 
       def setup
-        # Ignore the stagecoach config file
-        Git.global_ignore('.stagecoach')
-        Config.new
-
-        # Get the user details
+        # Say hello
         CommandLine.line_break
         puts "Stagecoach Initial Setup"
         CommandLine.line_break
+
+        # Ignore the stagecoach config file
+        Git.global_ignore('.stagecoach')
+
+        # Create a config file if necessary
+        Config.new
+
         # TODO Some verification of the input at this stage, for example test the
         # connection and have the user re-enter the details if necessary 
         loop do 
