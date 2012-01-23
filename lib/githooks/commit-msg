@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+#
+# Git commit-msg hook. If your branch name is in the form "t123", automatically
+# adds "Refs #123." to commit messages unless they mention "#123" already.
+# Include "#close" or "#finish" to add "Closes #123."
+#
+# For Pivotal Tracker, branch names like "s123" adds "[#123]".
+# Include "#close" or "#finish" to add "[Finishes #123]".
+#
+# If you include "#noref" in the commit message, nothing will be added to
+# the commit message, and the "#noref" itself will be stripped.
+#
+# By Henrik Nyh <http://henrik.nyh.se> 2009-09-10 under the MIT License.
+#
+#
+# Install:
+#
+# cd your_project
+# stick it in .git/hooks/commit-msg && chmod u+x .git/hooks/commit-msg
+#
+# Or store it centrally and symlink in your projects:
+# TODO Replace ~./.githooks etc with the file location in the gem
+#  ~/.githooks/commit-msg && chmod u+x ~/.githooks/commit-msg
+# cd your_project
+#  ~/.githooks/commit-msg .git/hooks
+
+require 'yaml'
+
+# Find the stagecoach gem path.  The gsub just trims /bin/stagecoach off the end.
+begin
+  gem_path = Gem.bin_path('redmine_stagecoach', 'stagecoach').gsub!(/\/bin\/stagecoach$/, '')
+rescue
+  exit
+end
+
+case gem_path
+when nil
+  exit
+else
+  config = YAML::load(File.open(gem_path + '/lib/stagecoach/config.yaml', 'r'))
+end
+
+# Find out what branch we are on
+def branches
+  `git branch`.split("\n")
+end
+
+def current_branch
+  branches.each do |b|
+    if b =~ /\*/
+      return b[1..-1].strip
+    end
+  end
+end
+
+
+# And now the git hook stuff
+FLAGS = [
+  NOREF  = "noref",
+  CLOSE  = "close",
+]
+
+CLOSING_FLAGS = [ CLOSE ]
+
+begin
+ticket_number = config[current_branch][:github_issue]
+rescue
+  exit
+end
+finish    = "Closes #%s" % ticket_number
+reference = "#%s"   % ticket_number
+
+message_file = ARGV[0]
+message = File.read(message_file).strip
+exit if message.include?("##{ticket_number}")
+exit if message =~ /#\d+/
+
+# Determine if any of the flags are included. Make a note of which and then remove it.
+message.sub!(/(?:^|\s)#(#{Regexp.union(*FLAGS)})\b/, '')
+flag = $1
+
+message =
+  case flag
+  when NOREF
+    message
+  when *CLOSING_FLAGS
+    [ message, finish ].join(" ")
+  else
+    [ message, reference ].join(" ")
+  end
+
+File.open(message_file, 'w') {|f| f.write message }
