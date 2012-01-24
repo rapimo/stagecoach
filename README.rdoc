@@ -1,7 +1,7 @@
 = Stagecoach
 stagecoach works in two stages, init and deploy. The init stage creates a branch based on a redmine/planio issue, and the deploy stage pushes, merges and (yes!) deploys it. 
 
-*You should always run stagecoach from the root directory of your repo*
+<b>You should always run stagecoach from the root directory of your repo</b>
 Otherwise it may (will) break.
 
 The first time you run stagecoach it will ask you for some information, namely your redmine/planio repo URL and your API key for this repo.
@@ -27,16 +27,16 @@ If you are working from a github issue, we can all get on with our lives.
 Future versions of stagecoach may do the coding for you, but at the moment you have to do this part manually.
 Just code and commit, code and commit until your feature or fix is ready.
 
-- Commit-msg githook
+<b>Commit-msg githook</b>
 If you opt to install the commit-msg githook during initial setup (stagecoach -s) then your commit messages will be automatically referenced to the github issue of the branch you are in 
 (this only applies to branches created or registered in Stagecoach).
 
-* to reference a different issue from a commit, simply refer to it as normal with #xxx in the commit message. The git-hook will leave your message alone.
-* to make no reference at all, you can use the #noref tag in the commit message. The git-hook
-* to close an issue with a commit, use the #closes tag.
+* to reference a different issue from a commit, simply refer to it as normal with `#xxx` in the commit message. The git-hook will leave your message alone.
+* to make no reference at all, you can use the `#noref` tag in the commit message.
+* to close an issue with a commit, use the `#closes` tag.
 
 For more information, see 
-* the githook itself at /path/to/your/repo/.git/hooks/commit-msg
+* the githook itself at `/path/to/your/repo/.git/hooks/commit-msg`
 * http://book.git-scm.com/5_git_hooks.html
 
 == Deploy Stage
@@ -52,12 +52,12 @@ This automates the entire deploy workflow for you as follows:
   cap staging deploy
   set redmine/planio ticket to 'feedback' status (if applicable)
  
-Sample usage:
+<b> Sample usage: </b>
   stagecoach -p 4115 -b new_branch_name
   [code, commit until feature or fix is complete]
   stagecoach -d
 
-Flags
+<b> Flags </b>
   --branch, -b: Enter your new branch name here, eg. stagecoach -b new_branch (optional)
   --planio, -p: Enter your planio issue number here, eg. stagecoach -p 1234 (optional)
   --github, -g: Enter your github issue number here, eg. stagecoach -g 1234 (optional)
