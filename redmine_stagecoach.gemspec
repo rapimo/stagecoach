@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "redmine_stagecoach"
-  s.version = "0.4.0"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Oli Barnett"]
-  s.date = "2012-01-22"
+  s.date = "2012-01-24"
   s.description = "Git/capistrano workflow automation script with Redmine & Github issue integration"
   s.email = "o.barnett@digitaleseiten.de"
   s.executables = ["stagecoach"]
@@ -28,11 +28,11 @@ Gem::Specification.new do |s|
     "VERSION",
     "bin/stagecoach",
     "lib/.DS_Store",
+    "lib/githooks/commit-msg",
     "lib/stagecoach.rb",
     "lib/stagecoach/capistrano.rb",
     "lib/stagecoach/command_line.rb",
     "lib/stagecoach/config.rb",
-    "lib/stagecoach/config.yaml",
     "lib/stagecoach/git.rb",
     "lib/stagecoach/redmine.rb",
     "redmine_stagecoach.gemspec",
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/omnikron/stagecoach"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.15"
   s.summary = "Stagecoach is in ur Redmine, automating ur Git workflow."
 
   if s.respond_to? :specification_version then
