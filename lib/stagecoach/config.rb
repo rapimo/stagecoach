@@ -5,13 +5,7 @@ module Stagecoach
   class Config
     class << self
       def new
-        case STDIN.gets.chomp
-        when 'C'
-          File.open(CONFIG_FILE, 'w') { |f| f.write("---\nredmine_site: none\nredmine_api_key: none")}
-        when 'Q'
-          puts "Exiting..."
-          exit
-        end
+        File.open(CONFIG_FILE, 'w') { |f| f.write("---\nredmine_site: none\nredmine_api_key: none")}
       end
 
       def open
@@ -44,10 +38,16 @@ module Stagecoach
         puts "You are running stagecoach from #{FileUtils.pwd.green}. Is this the root directory of your repository?" 
         puts "Stagecoach may not work properly anywhere else! So proceed with caution"
         CommandLine.line_break
-        print "[C]ontinue or [Q]uit:"
+        print "[C]ontinue or [Q]uit:  "
 
-        # Create a config file if necessary (Config.new deals with the C or Q input for now although it is ugly)
-        Config.new
+        # Create a config file if necessary 
+        case STDIN.gets.chomp
+        when 'C'
+        Config.new unless File.exist?(CONFIG_FILE) 
+        when 'Q'
+          puts "Exiting..."
+          exit
+        end
 
         # Tell git to ignore the stagecoach config file
         Git.global_ignore('.stagecoach')
@@ -62,7 +62,7 @@ module Stagecoach
         puts "This automatically references stagecoach-created github issues from each commit you make"
         puts "Note that this will only affect branches created in stagecoach.  For more information run stagecoach -h"
         CommandLine.line_break
-        puts "[I]nstall or [S]kip this step"
+        print "[I]nstall or [S]kip this step:  "
         loop do
           case STDIN.gets.chomp
           when 'I'
@@ -73,7 +73,7 @@ module Stagecoach
                 break
               when false
                 puts "You have a commit-msg githook already.  Are you sure you want to install?  This will #{'overwrite'.red} your current commit-msg githook."
-                print "Type [overwrite] to continue or anything else to skip installation:"
+                print "Type [overwrite] to continue or anything else to skip installation:  "
                 case STDIN.gets.chomp
                 when 'overwrite'
                   Config.githook_install(source_dir, install_dir, git_hook)

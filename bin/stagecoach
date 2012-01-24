@@ -42,8 +42,6 @@ module Stagecoach
     end
   end
 
-
-
   # Set up redmine client config.
   RedmineApi::Client.instance_eval do
     self.site = config["redmine_site"]
@@ -58,7 +56,6 @@ module Stagecoach
     puts "Exiting..."
     exit
   end 
-
 
   # Initial stage - set up branch and git issue.
 
@@ -87,6 +84,7 @@ module Stagecoach
         begin 
         puts "It is assigned to #{planio_issue.assigned_to.name}"
         rescue
+        puts "But it is not assigned to anybody yet." 
         end
         print "Continue? [Y]es or [Q]uit:  "
         case STDIN.gets.chomp
@@ -109,6 +107,11 @@ module Stagecoach
     # Change to master, pull changes, and create a new branch.
     CommandLine.line_break  
     puts "Switching to master branch"
+    #
+    # TODO if there is a file that has been git added but not git committed, it
+    # will pop up at this point looking confusing (eg. "A     test_file").
+    # Handle this better?
+    #
     Git.checkout(master)
     puts "Pulling changes:"
     Git.pull
@@ -149,6 +152,9 @@ module Stagecoach
     else
       Git.new_branch(new_branch)
     end
+    
+    # Ugly code, pretty output...
+    CommandLine.line_break
 
     # Issue handling.
     if opts[:github]
@@ -204,18 +210,11 @@ module Stagecoach
   end
 
   # ------------------------------------------------------------------
-
   # Deploy stage.
   if opts[:deploy]
-    # Finally, push, merge and deploy!
+
+    # Get the current git branch
     branch = Git.current_branch
-    
-    # Stop anybody deploying master to staging...
-    case branch
-    when 'master', 'Master' 
-      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
-      exit
-    end
 
     # There's no point in deploying without any commits
     unless Git.branch_has_commits?(branch)
@@ -223,13 +222,42 @@ module Stagecoach
       exit
     end
 
+    # You never know!  Display git status in case there are any nasty surprises.
+    unless Git.status =~ /nothing to commit/
+      CommandLine.line_break
+      puts "You have a dirty git branch:\n".red
+      puts Git.status
+      CommandLine.line_break
+      print "[D]eploy anyway".red
+      print " or "
+      print "[anything else] to cancel:  ".green
+      case STDIN.gets.chomp
+      when "D"
+        CommandLine.line_break
+        puts "DEPLOYING:"
+        CommandLine.line_break
+      else 
+        puts "Exiting..."
+        exit
+      end
+    end
+
+
+    # Stop anybody deploying master to staging...
+    case branch
+    when 'master', 'Master' 
+      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
+      exit
+    end
+
+    # Finally, push, merge and deploy!
     Git.push(branch)
     Git.merge(staging, branch)
     Git.push(staging)
     Capistrano.deploy(staging)
     Git.change_to_branch(master)
 
-    # Planio issue to feeedback status
+    # Planio issue to feedback status
     if planio_issue_number =  config[branch][:planio_issue]
       CommandLine.line_break
       puts "Attempting to change Planio ticket status to 'Feedback' for you:"

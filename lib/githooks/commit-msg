@@ -38,7 +38,7 @@ end
 if gem_available?('redmine_stagecoach') == false
   exit
 else
-  config = YAML::load(File.open(__FILE__ + '/../../.stagecoach', 'r'))
+  config = YAML::load(File.open(File.dirname(__FILE__) + '/../../.stagecoach', 'r'))
 end
 
 # Find out what branch we are on
@@ -59,8 +59,8 @@ end
 
 FLAGS = [
   NOREF  = "noref",
-  UP_NOREF = "Noref"
-  CAPS_NOREF = "NOREF"
+  UP_NOREF = "Noref",
+  CAPS_NOREF = "NOREF",
   CLOSE  = "close",
   UP_CLOSE= "Close",
   CAPS_CLOSE= "CLOSE"

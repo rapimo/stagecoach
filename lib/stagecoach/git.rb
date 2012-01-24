@@ -17,6 +17,10 @@ module Stagecoach
       def changes
         `git diff-files --name-status -r --ignore-submodules`
       end
+      
+      def status
+        `git status`
+      end
 
       def current_branch
         branches.each do |b| 
