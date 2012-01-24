@@ -26,18 +26,19 @@
 
 require 'yaml'
 
-# Find the stagecoach gem path.  The gsub just trims /bin/stagecoach off the end.
-begin
-  gem_path = Gem.bin_path('redmine_stagecoach', 'stagecoach').gsub!(/\/bin\/stagecoach$/, '')
+# Custom method to check for installed redmine_stagecoach gem
+def gem_available?(name)
+   Gem::Specification.find_by_name(name)
+rescue Gem::LoadError
+   false
 rescue
-  exit
+   Gem.available?(name)
 end
 
-case gem_path
-when nil
+if gem_available?('redmine_stagecoach') == false
   exit
 else
-  config = YAML::load(File.open(gem_path + '/lib/stagecoach/config.yaml', 'r'))
+  config = YAML::load(File.open(__FILE__ + '/../../.stagecoach', 'r'))
 end
 
 # Find out what branch we are on
@@ -55,12 +56,18 @@ end
 
 
 # And now the git hook stuff
+
 FLAGS = [
   NOREF  = "noref",
+  UP_NOREF = "Noref"
+  CAPS_NOREF = "NOREF"
   CLOSE  = "close",
+  UP_CLOSE= "Close",
+  CAPS_CLOSE= "CLOSE"
 ]
 
-CLOSING_FLAGS = [ CLOSE ]
+NO_REFERENCE_FLAGS = [ NOREF, UP_NOREF, CAPS_NOREF  ]
+CLOSING_FLAGS = [ CLOSE, UP_CLOSE, CAPS_CLOSE ]
 
 begin
 ticket_number = config[current_branch][:github_issue]
@@ -81,7 +88,7 @@ flag = $1
 
 message =
   case flag
-  when NOREF
+  when *NO_REFERENCE_FLAGS
     message
   when *CLOSING_FLAGS
     [ message, finish ].join(" ")
