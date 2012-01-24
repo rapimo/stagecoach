@@ -1,7 +1,7 @@
 = Stagecoach
 stagecoach works in two stages, init and deploy. The init stage creates a branch based on a redmine/planio issue, and the deploy stage pushes, merges and (yes!) deploys it. 
 
-*bold*:: You should always run stagecoach from the root directory of your repo
+*You should always run stagecoach from the root directory of your repo*
 Otherwise it may (will) break.
 
 The first time you run stagecoach it will ask you for some information, namely your redmine/planio repo URL and your API key for this repo.
