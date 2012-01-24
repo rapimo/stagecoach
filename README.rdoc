@@ -1,7 +1,7 @@
 = Stagecoach
 stagecoach works in two stages, init and deploy. The init stage creates a branch based on a redmine/planio issue, and the deploy stage pushes, merges and (yes!) deploys it. 
 
-*You should always run stagecoach from the root directory of your repo*
+*bold*:: You should always run stagecoach from the root directory of your repo
 Otherwise it may (will) break.
 
 The first time you run stagecoach it will ask you for some information, namely your redmine/planio repo URL and your API key for this repo.
@@ -10,9 +10,8 @@ It will also install a custom commit-msg git hook (if you ask it to) - for more 
 All stagecoach config is saved in /path/to/your/repo/.stagecoach which is created at initial setup and added to your global .gitignore.  This is a yaml file with fairly obvious syntax
 so if you need to remove a branch or edit the issue number that a branch points to, it is possible (although not necessarily recommended) to edit it.
 
-Init Stage
-==========
-stagecoach -p[lanio] 4115 (OR) -g[ithub] 525 -b[ranch] my_new_branch
+== Init Stage
+  stagecoach -p[lanio] 4115 (OR) -g[ithub] 525 -b[ranch] my_new_branch
 
 You can also just run stagecoach without any flags and it will allow you to enter this stuff manually.
 
@@ -24,27 +23,24 @@ in your browser and do this manually.  It also sets up a git issue for you to re
 
 If you are working from a github issue, we can all get on with our lives.
 
-Coding Stage
-============
+== Coding Stage
 Future versions of stagecoach may do the coding for you, but at the moment you have to do this part manually.
 Just code and commit, code and commit until your feature or fix is ready.
 
-Commit-msg githook
-------------------
+- Commit-msg githook
 If you opt to install the commit-msg githook during initial setup (stagecoach -s) then your commit messages will be automatically referenced to the github issue of the branch you are in 
 (this only applies to branches created or registered in Stagecoach).
 
-  - to reference a different issue from a commit, simply refer to it as normal with #xxx in the commit message. The git-hook will leave your message alone.
-  - to make no reference at all, you can use the #noref tag in the commit message. The git-hook
-  - to close an issue with a commit, use the #closes tag.
+* to reference a different issue from a commit, simply refer to it as normal with #xxx in the commit message. The git-hook will leave your message alone.
+* to make no reference at all, you can use the #noref tag in the commit message. The git-hook
+* to close an issue with a commit, use the #closes tag.
 
 For more information, see 
-  - the githook itself at /path/to/your/repo/.git/hooks/commit-msg
-  - http://book.git-scm.com/5_git_hooks.html
+* the githook itself at /path/to/your/repo/.git/hooks/commit-msg
+* http://book.git-scm.com/5_git_hooks.html
 
-Deploy Stage
-============
-stagecoach -d[eploy]
+== Deploy Stage
+  stagecoach -d[eploy]
 
 This automates the entire deploy workflow for you as follows:
 
@@ -62,8 +58,8 @@ Sample usage:
   stagecoach -d
 
 Flags
-        --branch, -b: Enter your new branch name here, eg. stagecoach -b new_branch (optional)
-        --planio, -p: Enter your planio issue number here, eg. stagecoach -p 1234 (optional)
-        --github, -g: Enter your github issue number here, eg. stagecoach -g 1234 (optional)
-        --deploy, -d: Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
-        --setup,  -s: Use this the first time you run stagecoach to save your redmine repository/api key and install the commit-msg githook if desired
+  --branch, -b: Enter your new branch name here, eg. stagecoach -b new_branch (optional)
+  --planio, -p: Enter your planio issue number here, eg. stagecoach -p 1234 (optional)
+  --github, -g: Enter your github issue number here, eg. stagecoach -g 1234 (optional)
+  --deploy, -d: Use this option to skip straight to push & deploy if you have already pulled from master and created your new branch
+  --setup,  -s: Use this the first time you run stagecoach to save your redmine repository/api key and install the commit-msg githook if desired
