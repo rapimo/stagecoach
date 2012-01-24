@@ -81,7 +81,7 @@ module Stagecoach
     if opts[:planio]
       planio_issue_number = opts[:planio]
       planio_issue = Redmine.issue(planio_issue_number)
-      if planio_issue.status_id != '1'
+      if planio_issue.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{planio_issue.status.name}'"
         begin 
