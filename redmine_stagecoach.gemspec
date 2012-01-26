@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "redmine_stagecoach"
-  s.version = "0.5.1"
+  s.version = "0.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Oli Barnett"]
@@ -49,6 +49,7 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<activeresource>, [">= 0"])
       s.add_runtime_dependency(%q<ghi>, [">= 0"])
       s.add_runtime_dependency(%q<trollop>, [">= 0"])
       s.add_runtime_dependency(%q<capistrano>, [">= 0"])
@@ -57,6 +58,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
+      s.add_dependency(%q<activeresource>, [">= 0"])
       s.add_dependency(%q<ghi>, [">= 0"])
       s.add_dependency(%q<trollop>, [">= 0"])
       s.add_dependency(%q<capistrano>, [">= 0"])
@@ -66,6 +68,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
+    s.add_dependency(%q<activeresource>, [">= 0"])
     s.add_dependency(%q<ghi>, [">= 0"])
     s.add_dependency(%q<trollop>, [">= 0"])
     s.add_dependency(%q<capistrano>, [">= 0"])
