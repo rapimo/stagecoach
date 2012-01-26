@@ -24,6 +24,7 @@
 # cd your_project
 #  ~/.githooks/commit-msg .git/hooks
 
+require 'rubygems'
 require 'yaml'
 
 # Custom method to check for installed redmine_stagecoach gem
