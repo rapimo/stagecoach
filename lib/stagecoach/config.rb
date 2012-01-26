@@ -49,8 +49,40 @@ module Stagecoach
           exit
         end
 
+        # TODO Tell git to use a global config file if one is not used. Also if one
+        # is used and it is not .gitconfig, we need to save .stagecoach to that file somehow
+        unless Git.global_ignore_file
+          Git.global_ignore_file(".gitignore")  
+        end
+
         # Tell git to ignore the stagecoach config file
         Git.global_ignore('.stagecoach')
+
+        # Set up global github username if it is not there
+        loop do
+          if Git.global_config(:github, :user) == ""
+            print "Please enter your github username:  "
+            case STDIN.gets.chomp
+            when ""
+              print "Github user can't be blank, please try again:"
+              redo
+            else
+              Git.set_global_config(:github, :user, $_.chomp)           # $_ means the last STDIN. 
+            end
+          end
+
+          if Git.global_config(:github, :token) == ""
+            print "Please enter your Github api token (you can find this at http://github.com/account/admin):  "
+            case STDIN.gets.chomp
+            when ""
+              print "Github API key can't be blank, please try again:  "
+              redo
+            else
+              Git.set_global_config(:github, :token, $_.chomp)
+            end
+          end
+          break
+        end
 
         # Install the commit-msg githook if it is not already there:
         source_dir = (File.dirname(__FILE__) + '/../githooks/')
