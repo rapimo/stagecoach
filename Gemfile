@@ -1,5 +1,6 @@
 source "http://rubygems.org"
 
+gem 'activeresource'
 gem 'ghi'
 gem 'trollop'
 gem 'capistrano'
