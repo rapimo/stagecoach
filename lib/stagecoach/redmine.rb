@@ -13,7 +13,12 @@ module Stagecoach
     end
 
     def self.issue_url(issue)
-      RedmineApi::Client.site + "/issues/" + issue.id
+      # originally this was:
+      #
+      # RedmineApi::Client.site + "/issues/" + issue.id
+      #
+      # but this caused URI merge errors on some setups.
+      "#{RedmineApi::Client.site}/issues/#{issue.id}"
     end
 
     # Open the issue in a browser.
