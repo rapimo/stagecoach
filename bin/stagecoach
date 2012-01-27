@@ -216,10 +216,15 @@ module Stagecoach
     # Get the current git branch
     branch = Git.current_branch
 
-    # There's no point in deploying without any commits
+    # There's no point in pushing without any commits
     unless Git.branch_has_commits?(branch)
-      puts "You don't have any uncommitted changes on branch #{branch}.  Please make some commits before running stagecoach!\nExiting..."
-      exit
+      puts "You don't have any uncommitted changes on branch #{branch}."
+      puts "If you have already pushed, you can merge #{branch} with staging and deploy."
+      puts "Alternatively, you can cancel the deploy and go make some commits!"
+      print "Enter [merge] or anything else to exit:  "
+      unless STDIN.gets.chomp == 'merge'
+        exit
+      end
     end
 
     # You never know!  Display git status in case there are any nasty surprises.
