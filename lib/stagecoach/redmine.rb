@@ -24,7 +24,7 @@ module Stagecoach
     # Open the issue in a browser.
     def self.view_issue(issue)
       issue_url = Redmine.issue_url(issue)
-        print "Open planio issue in browser? [Y]es or anything else to exit:  "
+        print "Open issue in browser? [Y]es or anything else to exit:  "
         `open #{issue_url.to_s}` if gets.chomp == "Y"
         puts "Staging completed!  Exiting..."
     end
