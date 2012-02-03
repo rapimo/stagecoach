@@ -263,8 +263,8 @@ module Stagecoach
 
     puts "Push successful.  stagecoach -d [branch_name] to deploy (default is staging)."
     puts "Exiting..."
+    exit
   end
-
 
   # ------------------------------------------------------------------
   # Deploy stage.
