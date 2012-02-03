@@ -84,9 +84,9 @@ module Stagecoach
         puts "Warning!".red
         puts "This issue is in status '#{redmine_issue.status.name}'"
         begin 
-        puts "It is assigned to #{redmine_issue.assigned_to.name}"
+          puts "It is assigned to #{redmine_issue.assigned_to.name}"
         rescue
-        puts "But it is not assigned to anybody yet." 
+          puts "But it is not assigned to anybody yet." 
         end
         print "Continue? [Y]es or [Q]uit:  "
         case STDIN.gets.chomp
@@ -154,7 +154,7 @@ module Stagecoach
     else
       Git.new_branch(new_branch)
     end
-    
+
     # Ugly code, pretty output...
     CommandLine.line_break
 
@@ -177,7 +177,7 @@ module Stagecoach
         puts e.message
         exit
       end
-        puts "Issue found: #{redmine_issue.subject}\n" 
+      puts "Issue found: #{redmine_issue.subject}\n" 
 
       # Create a Github issue referencing the redmine issue.
       puts "Creating Git issue with subject: " + redmine_issue.subject
@@ -191,7 +191,7 @@ module Stagecoach
       config[Git.current_branch] = {:github_issue => github_issue_id, :redmine_issue => redmine_issue}
 
       print "Would you like to edit the issue on Github? [Y]es or anything else to continue:  "
-      
+
       if STDIN.gets.chomp == 'Y'
         Git.view_issue(github_issue_id) 
       else
@@ -227,8 +227,7 @@ module Stagecoach
       puts "Otherwise, go make some commits!"
       puts "#%s for help" % "stagecoach -h".green
       puts "Exiting..."
-        exit
-      end
+      exit
     end
 
     # You never know!  Display git status in case there are any nasty surprises.
@@ -259,17 +258,20 @@ module Stagecoach
       exit
     end
 
-    # Finally, push, merge and deploy!
+    # Push the branch and give option to continue or quit
     Git.push(branch)
+
+    puts "Push successful.  stagecoach -d [branch_name] to deploy (default is staging)."
+    puts "Exiting..."
   end
 
 
   # ------------------------------------------------------------------
   # Deploy stage.
   # ------------------------------------------------------------------
-  
+
   if opts[:deploy]
-    
+
     # Get the current git branch
     from_branch = Git.current_branch
     to_branch = opts[:deploy]
