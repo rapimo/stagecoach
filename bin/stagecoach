@@ -57,9 +57,11 @@ module Stagecoach
     exit
   end 
 
+  # ------------------------------------------------------------------
   # Initial stage - set up branch and git issue.
+  # ------------------------------------------------------------------
 
-  unless opts[:deploy]
+  unless opts[:deploy] or opts[:push]
 
     # If no issue argument has been given.
     if opts[:github].nil? && opts[:redmine].nil?
@@ -210,9 +212,10 @@ module Stagecoach
   end
 
   # ------------------------------------------------------------------
-  # Deploy stage.
-  if opts[:deploy]
+  # Push stage
+  # ------------------------------------------------------------------
 
+  if opts[:push]
     # Get the current git branch
     branch = Git.current_branch
 
@@ -247,19 +250,32 @@ module Stagecoach
       end
     end
 
-
+    # TODO this needs removing if we implement the 'deploy to staging' stuff
     # Stop anybody deploying master to staging...
     case branch
-    when 'master', 'Master' 
-      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
+    when 'master', 'Master', 'staging', 'Staging' 
+      puts "You can't use stagecoach to deploy your #{branch} branch.\nExiting..."
       exit
     end
 
     # Finally, push, merge and deploy!
     Git.push(branch)
-    Git.merge(staging, branch)
-    Git.push(staging)
-    Capistrano.deploy(staging)
+  end
+
+
+  # ------------------------------------------------------------------
+  # Deploy stage.
+  # ------------------------------------------------------------------
+  
+  if opts[:deploy]
+    
+    # Get the current git branch
+    from_branch = Git.current_branch
+    to_branch = opts[:deploy]
+
+    Git.merge(to_branch, from_branch)
+    Git.push(to_branch)
+    Capistrano.deploy(to_branch)
     Git.change_to_branch(master)
 
     # Redmine issue to feedback status
