@@ -261,16 +261,19 @@ module Stagecoach
     # Push the branch and give option to continue or quit
     Git.push(branch)
 
-    puts "Push successful.  stagecoach -d [branch_name] to deploy (default is staging)."
-    puts "Exiting..."
-    exit
+    puts "Push successful."  
+    unless opts[:deploy_given]
+      "stagecoach -d [branch_name] to deploy (default is staging)."
+      "exiting..."
+      exit
+    end
   end
 
   # ------------------------------------------------------------------
   # Deploy stage.
   # ------------------------------------------------------------------
 
-  if opts[:deploy]
+  if opts[:deploy_given]
 
     # Get the current git branch
     from_branch = Git.current_branch
