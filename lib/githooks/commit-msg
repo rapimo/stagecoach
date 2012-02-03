@@ -91,7 +91,7 @@ message =
   case flag
   when *NO_REFERENCE_FLAGS
     message
-  when *CLOSING_FLAGS
+  when *CLOSE
     [ message, finish ].join(" ")
   else
     [ message, reference ].join(" ")

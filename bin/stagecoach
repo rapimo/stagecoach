@@ -222,10 +222,11 @@ module Stagecoach
     # There's no point in pushing without any commits
     unless Git.branch_has_commits?(branch)
       puts "You don't have any uncommitted changes on branch #{branch}."
-      puts "If you have already pushed, you can merge #{branch} with staging and deploy."
-      puts "Alternatively, you can cancel the deploy and go make some commits!"
-      print "Enter [merge] or anything else to exit:  "
-      unless STDIN.gets.chomp == 'merge'
+      puts "If you have already pushed your changes, run:"
+      puts "stagecoach -d [deploy_branch]  - default is 'staging'"
+      puts "Otherwise, go make some commits!"
+      puts "#%s for help" % "stagecoach -h".green
+      puts "Exiting..."
         exit
       end
     end
@@ -236,7 +237,7 @@ module Stagecoach
       puts "You have a dirty git branch:\n".red
       puts Git.status
       CommandLine.line_break
-      print "[D]eploy anyway".red
+      print "[P]ush anyway".red
       print " or "
       print "[anything else] to cancel:  ".green
       case STDIN.gets.chomp
