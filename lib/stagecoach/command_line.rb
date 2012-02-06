@@ -76,12 +76,8 @@ This automates the entire deploy workflow for you as follows:
         opt :redmine, "Enter your redmine/planio issue number here, eg. stagecoach -r 1234 (optional)", :type  => :string
         opt :github, "Enter your github issue number here, eg. stagecoach -g 1234 (optional)", :type => :string
         opt :push, "Use this option to push your changes to your remote branch (will be created if necessary)"
-        opt :deploy, "Use this option to  deploy from your current branch to any branch you choose, eg. stagecoach -d staging (default is staging)", :type => :string, :default => 'staging'
+        opt :deploy, "Use this option to  deploy from your current branch to any branch you choose, eg. stagecoach -d staging", :type => :string 
         opt :setup, "Use this the first time you run stagecoach to save your redmine repository and api key"
-        
-        # Some arguments don't belong together
-        conflicts(:redmine, :github)
-        conflicts(:push, :deploy)
       end
     end
   end
