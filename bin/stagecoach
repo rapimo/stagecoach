@@ -31,13 +31,13 @@ module Stagecoach
     Config.setup if config["redmine_api"]  == "none"
 
     # Checks that command-line args are present and correct.
-    Trollop::die :planio, "issue number can only contain digits" if opts[:planio] && opts[:planio][/\D/]
+    Trollop::die :redmine, "issue number can only contain digits" if opts[:redmine] && opts[:redmine][/\D/]
     Trollop::die :github, "issue number can only contain digits" if opts[:github] && opts[:github][/\D/]
     Trollop::die :branch, "name must be longer than 1 character" if opts[:branch] && opts[:branch].length <= 1
 
-    # You can't give a planio and a github issue number (for the moment)
-    if opts[:github] && opts[:planio]
-      puts "You can't enter a github issue at the same time as a planio issue at the moment.  Make up your mind!\nExiting..."
+    # You can't give a redmine and a github issue number (for the moment)
+    if opts[:github] && opts[:redmine]
+      puts "You can't enter a github issue at the same time as a redmine issue at the moment.  Make up your mind!\nExiting..."
       exit
     end
   end
@@ -57,34 +57,36 @@ module Stagecoach
     exit
   end 
 
+  # ------------------------------------------------------------------
   # Initial stage - set up branch and git issue.
+  # ------------------------------------------------------------------
 
-  unless opts[:deploy]
+  unless opts[:deploy] or opts[:push]
 
     # If no issue argument has been given.
-    if opts[:github].nil? && opts[:planio].nil?
-      print "Are you working on a [P]lanio or a [G]ithub issue:  "
+    if opts[:github].nil? && opts[:redmine].nil?
+      print "Are you working on a [R]edmine or a [G]ithub issue:  "
       case STDIN.gets.chomp
-      when 'P'
-        print "Please enter your Planio issue number:  "
-        opts[:planio] = gets.chomp
+      when 'R'
+        print "Please enter your Redmine issue number:  "
+        opts[:redmine] = gets.chomp
       when 'G'
         print "Please enter your Github issue number:  "
         opts[:github] = gets.chomp
       end
     end
 
-    # Check that the planio issue is not already assigned.
-    if opts[:planio]
-      planio_issue_number = opts[:planio]
-      planio_issue = Redmine.issue(planio_issue_number)
-      if planio_issue.status.id != '1'
+    # Check that the redmine issue is not already assigned.
+    if opts[:redmine]
+      redmine_issue_number = opts[:redmine]
+      redmine_issue = Redmine.issue(redmine_issue_number)
+      if redmine_issue.status.id != '1'
         puts "Warning!".red
-        puts "This issue is in status '#{planio_issue.status.name}'"
+        puts "This issue is in status '#{redmine_issue.status.name}'"
         begin 
-        puts "It is assigned to #{planio_issue.assigned_to.name}"
+          puts "It is assigned to #{redmine_issue.assigned_to.name}"
         rescue
-        puts "But it is not assigned to anybody yet." 
+          puts "But it is not assigned to anybody yet." 
         end
         print "Continue? [Y]es or [Q]uit:  "
         case STDIN.gets.chomp
@@ -94,9 +96,9 @@ module Stagecoach
         end
       end
 
-      # Set the planio issue status to 'In Bearbeitung'
-      planio_issue.status_id = 2
-      planio_issue.save
+      # Set the redmine issue status to 'In Bearbeitung'
+      redmine_issue.status_id = 2
+      redmine_issue.save
     end
 
     # TODO: Check that the github issue is not already assigned.
@@ -152,7 +154,7 @@ module Stagecoach
     else
       Git.new_branch(new_branch)
     end
-    
+
     # Ugly code, pretty output...
     CommandLine.line_break
 
@@ -160,36 +162,36 @@ module Stagecoach
     if opts[:github]
       config[Git.current_branch] = {:github_issue => opts[:github]}
       #TODO check that github issue is not assigned to somebody already
-    elsif opts[:planio]
-      config[Git.current_branch] = {:planio_issue => planio_issue_number}
+    elsif opts[:redmine]
+      config[Git.current_branch] = {:redmine_issue => redmine_issue_number}
     end
 
     issue = config[Git.current_branch]
 
     # Set up the related issue for this branch.
-    if planio_issue = issue[:planio_issue]
+    if redmine_issue = issue[:redmine_issue]
       begin
-        puts "Searching for issue number #{planio_issue}..."
-        redmine_issue = Redmine.issue(planio_issue)
+        puts "Searching for issue number #{redmine_issue}..."
+        redmine_issue = Redmine.issue(redmine_issue)
       rescue ActiveResource::ResourceNotFound => e
         puts e.message
         exit
       end
-        puts "Issue found: #{redmine_issue.subject}\n" 
+      puts "Issue found: #{redmine_issue.subject}\n" 
 
-      # Create a Github issue referencing the planio issue.
+      # Create a Github issue referencing the redmine issue.
       puts "Creating Git issue with subject: " + redmine_issue.subject
-      body = "Planio issue: #{Redmine.issue_url(redmine_issue)} \n\n #{redmine_issue.description}"
+      body = "Redmine issue: #{Redmine.issue_url(redmine_issue)} \n\n #{redmine_issue.description}"
 
       # Create a Git issue.
       github_issue =  Git.new_issue(redmine_issue.subject, body)
       github_issue_id = github_issue[/\d+/]
 
       # Save it so we can reference it in commits using the magic of git hooks!
-      config[Git.current_branch] = {:github_issue => github_issue_id, :planio_issue => planio_issue}
+      config[Git.current_branch] = {:github_issue => github_issue_id, :redmine_issue => redmine_issue}
 
       print "Would you like to edit the issue on Github? [Y]es or anything else to continue:  "
-      
+
       if STDIN.gets.chomp == 'Y'
         Git.view_issue(github_issue_id) 
       else
@@ -210,21 +212,22 @@ module Stagecoach
   end
 
   # ------------------------------------------------------------------
-  # Deploy stage.
-  if opts[:deploy]
+  # Push stage
+  # ------------------------------------------------------------------
 
+  if opts[:push]
     # Get the current git branch
     branch = Git.current_branch
 
     # There's no point in pushing without any commits
     unless Git.branch_has_commits?(branch)
       puts "You don't have any uncommitted changes on branch #{branch}."
-      puts "If you have already pushed, you can merge #{branch} with staging and deploy."
-      puts "Alternatively, you can cancel the deploy and go make some commits!"
-      print "Enter [merge] or anything else to exit:  "
-      unless STDIN.gets.chomp == 'merge'
-        exit
-      end
+      puts "If you have already pushed your changes, run:"
+      puts "stagecoach -d [deploy_branch]  - default is 'staging'"
+      puts "Otherwise, go make some commits!"
+      puts "#%s for help" % "stagecoach -h".green
+      puts "Exiting..."
+      exit
     end
 
     # You never know!  Display git status in case there are any nasty surprises.
@@ -233,7 +236,7 @@ module Stagecoach
       puts "You have a dirty git branch:\n".red
       puts Git.status
       CommandLine.line_break
-      print "[D]eploy anyway".red
+      print "[P]ush anyway".red
       print " or "
       print "[anything else] to cancel:  ".green
       case STDIN.gets.chomp
@@ -247,26 +250,45 @@ module Stagecoach
       end
     end
 
-
+    # TODO this needs removing if we implement the 'deploy to staging' stuff
     # Stop anybody deploying master to staging...
     case branch
-    when 'master', 'Master' 
-      puts "You can't use stagecoach to deploy your master branch.\nExiting..."
+    when 'master', 'Master', 'staging', 'Staging' 
+      puts "You can't use stagecoach to deploy your #{branch} branch.\nExiting..."
       exit
     end
 
-    # Finally, push, merge and deploy!
+    # Push the branch and give option to continue or quit
     Git.push(branch)
-    Git.merge(staging, branch)
-    Git.push(staging)
-    Capistrano.deploy(staging)
+
+    puts "Push successful."  
+    unless opts[:deploy_given]
+      "stagecoach -d [branch_name] to deploy (default is staging)."
+      "exiting..."
+      exit
+    end
+  end
+
+  # ------------------------------------------------------------------
+  # Deploy stage.
+  # ------------------------------------------------------------------
+
+  if opts[:deploy_given]
+
+    # Get the current git branch
+    from_branch = Git.current_branch
+    to_branch = opts[:deploy]
+
+    Git.merge(to_branch, from_branch)
+    Git.push(to_branch)
+    Capistrano.deploy(to_branch)
     Git.change_to_branch(master)
 
-    # Planio issue to feedback status
-    if planio_issue_number =  config[branch][:planio_issue]
+    # Redmine issue to feedback status
+    if redmine_issue_number =  config[branch][:redmine_issue]
       CommandLine.line_break
-      puts "Attempting to change Planio ticket status to 'Feedback' for you:"
-      issue = Redmine.issue(planio_issue_number)
+      puts "Attempting to change Redmine ticket status to 'Feedback' for you:"
+      issue = Redmine.issue(redmine_issue_number)
       issue.status_id = 4
       issue.save
       Redmine.view_issue(issue)
