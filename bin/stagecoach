@@ -80,7 +80,14 @@ module Stagecoach
     # Check that the redmine issue is not already assigned.
     if opts[:redmine]
       redmine_issue_number = opts[:redmine]
-      redmine_issue = Redmine.issue(redmine_issue_number)
+      begin
+        puts "Searching for issue number #{redmine_issue_number}..."
+        redmine_issue = Redmine.issue(redmine_issue_number)
+      rescue ActiveResource::ResourceNotFound => e
+        puts e.message
+        exit
+      end
+
       if redmine_issue.status.id != '1'
         puts "Warning!".red
         puts "This issue is in status '#{redmine_issue.status.name}'"
@@ -167,17 +174,8 @@ module Stagecoach
       config[Git.current_branch] = {:redmine_issue => redmine_issue_number}
     end
 
-    issue = config[Git.current_branch]
-
     # Set up the related issue for this branch.
-    if redmine_issue = issue[:redmine_issue]
-      begin
-        puts "Searching for issue number #{redmine_issue}..."
-        redmine_issue = Redmine.issue(redmine_issue)
-      rescue ActiveResource::ResourceNotFound => e
-        puts e.message
-        exit
-      end
+    if defined?(redmine_issue)
       puts "Issue found: #{redmine_issue.subject}\n" 
 
       # Create a Github issue referencing the redmine issue.
@@ -189,7 +187,8 @@ module Stagecoach
       github_issue_id = github_issue[/\d+/]
 
       # Save it so we can reference it in commits using the magic of git hooks!
-      config[Git.current_branch] = {:github_issue => github_issue_id, :redmine_issue => redmine_issue}
+      config[Git.current_branch] = {:github_issue => github_issue_id, :redmine_issue => redmine_issue_number}
+
 
       print "Would you like to edit the issue on Github? [Y]es or anything else to continue:  "
 
@@ -200,7 +199,7 @@ module Stagecoach
     end
 
     # Github issues are easier.
-    if issue[:github]
+    if config[Git.current_branch][:github]
       #TODO what happens if no github issue is found?
       puts "Searching for github issue number #{issue[:number]}..."
       github_issue = Git.issue(issue[:number])
