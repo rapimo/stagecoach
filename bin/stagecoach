@@ -18,6 +18,7 @@ module Stagecoach
 
   # Initial setup without -s flag.
   unless File.exist?(CONFIG_FILE)
+    puts "No .stagecoach file present, running initial setup."
     Config.setup
   end
 
