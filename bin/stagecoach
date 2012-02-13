@@ -175,7 +175,7 @@ module Stagecoach
     end
 
     # Set up the related issue for this branch.
-    if defined?(redmine_issue)
+    if redmine_issue.present?
       puts "Issue found: #{redmine_issue.subject}\n" 
 
       # Create a Github issue referencing the redmine issue.
